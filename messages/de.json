@@ -1,0 +1,17 @@
+{
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "notFound": "Nicht gefunden"
+  },
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "blog": "Blog",
+    "contact": "Kontakt"
+  },
+  "footer": {
+    "copyright": "© {year} {siteName}. Alle Rechte vorbehalten.",
+    "poweredBy": "Angetrieben von Next.js"
+  }
+}

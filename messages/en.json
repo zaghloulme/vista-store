@@ -1,0 +1,17 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "notFound": "Not found"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "footer": {
+    "copyright": "© {year} {siteName}. All rights reserved.",
+    "poweredBy": "Powered by Next.js"
+  }
+}
