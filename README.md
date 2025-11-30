@@ -1,5 +1,8 @@
 # {{PROJECT_NAME}}
 
+<!-- TODO: Replace OWNER/REPO with your GitHub repository path -->
+[![CI/CD Pipeline](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+
 > AI-friendly Next.js template with swappable CMS, comprehensive SEO, and multi-language support
 
 ## Project Overview
@@ -205,6 +208,48 @@ The template explicitly allows these AI crawlers:
 - Google-Extended (Gemini)
 - PerplexityBot (Perplexity)
 
+## Quality Assurance
+
+### Git Hooks
+
+Automated code quality checks run before commits and pushes:
+
+**Pre-Commit Hook:**
+- Runs ESLint with auto-fix on staged files
+- TypeScript type-checking across entire codebase
+- Only allows commit if all checks pass
+
+**Pre-Push Hook:**
+- Runs full unit test suite
+- Prevents broken code from reaching remote repository
+
+### CI/CD Pipelines
+
+Automated workflows run on every pull request and push to main:
+
+**Main CI/CD Pipeline** (`.github/workflows/ci.yml`):
+1. **Lint & Type Check** - ESLint and TypeScript validation
+2. **Unit Tests** - Vitest test execution
+3. **Build** - Production build verification
+4. **E2E Tests** - Playwright browser testing (Chromium, Firefox, WebKit)
+
+**Security & Dependencies** (`.github/workflows/dependency-check.yml`):
+- Weekly npm security audits (Mondays 9am UTC)
+- Automated dependency review on PRs
+- License compliance checks
+- Security report artifacts
+
+**Performance Monitoring** (`.github/workflows/benchmark.yml`):
+- Lighthouse CI on pull requests
+- Performance, Accessibility, SEO, Best Practices scores
+- Automatic PR comments with metrics
+- Historical performance tracking
+
+**Automated Updates** (`.github/dependabot.yml`):
+- Weekly dependency updates
+- Grouped minor/patch updates
+- Auto-labeled PRs for easy review
+
 ## Testing
 
 ```bash
@@ -251,18 +296,32 @@ This section provides context for AI development tools like Claude Code, GitHub 
 ## Scripts
 
 ```bash
+# Development
 npm run dev           # Start development server
 npm run build         # Build for production
 npm run start         # Start production server
+
+# Testing
+npm run test          # Run Vitest unit tests
+npm run test:e2e      # Run Playwright E2E tests
+npm run test:e2e:ui   # Run Playwright in UI mode
+
+# Code Quality
 npm run lint          # Run ESLint
-npm run test          # Run Vitest tests
-npm run test:e2e      # Run Playwright tests
+npm run lint:fix      # Run ESLint with auto-fix
 npm run type-check    # TypeScript type checking
+npm run lint-staged   # Run lint-staged (used by Git hooks)
+npm run validate      # Run lint + type-check + test (full validation)
+
+# CMS Setup
+npm run setup:sanity  # Initialize Sanity CMS
+npm run setup:payload # Initialize Payload CMS
+npm run sanity:dev    # Start Sanity Studio
 ```
 
 ## Contributing
 
-This is a template repository. Feel free to customize it for your project needs.
+This is a template repository. For development workflow and contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
