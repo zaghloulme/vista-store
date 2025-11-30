@@ -67,6 +67,8 @@
 
 ## Getting Started
 
+> **New to this template?** See [SETUP.md](SETUP.md) for a quick configuration checklist.
+
 ### Prerequisites
 
 - Node.js 20+ and npm
