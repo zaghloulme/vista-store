@@ -1,2 +1,2 @@
 # Run unit tests before pushing
-npm test
+npm test -- --run
