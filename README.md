@@ -20,7 +20,7 @@
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **CMS:** {{CMS_PROVIDER}} (Sanity or Payload)
+- **CMS:** {{CMS_PROVIDER}}
 - **Styling:** Tailwind CSS 4
 - **i18n:** next-intl (UI) + CMS (content)
 - **Analytics:** Google Tag Manager
@@ -31,9 +31,6 @@
 
 {{LOCALES}}
 
-- English (en)
-- Arabic (ar) - RTL support
-- German (de)
 
 ## Features
 
