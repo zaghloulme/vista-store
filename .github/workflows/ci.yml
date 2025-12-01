@@ -55,7 +55,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Run unit tests
-        run: npm test
+        run: npm test -- --run
 
   # Job 3: Build
   build:
