@@ -83,6 +83,17 @@ jobs:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder' }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
 
+      - name: Debug - Check .next directory
+        run: |
+          pwd
+          ls -la
+          if [ -d ".next" ]; then
+            echo ".next directory exists"
+            ls -la .next
+          else
+            echo ".next directory does not exist"
+          fi
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
