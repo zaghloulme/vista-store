@@ -194,6 +194,369 @@ CMS_PROVIDER=payload  # was 'sanity'
 
 **No code changes required!**
 
+### How to Design Good DTOs
+
+In this architecture, a **DTO (Data Transfer Object)** is the contract between your CMS and your Frontend.
+
+#### The Golden Rule
+
+> **Your UI components should never know which CMS you are using. They should only know about DTOs.**
+
+#### Characteristics of a "Good" DTO
+
+**1. UI-Centric, Not CMS-Centric**
+
+A good DTO is designed around **what the UI needs to render**, not how the data is stored in the database.
+
+❌ **Bad (CMS-Centric):**
+
+```typescript
+interface ProductDTO {
+  _id: string;               // Sanity specific
+  _type: 'product';          // Sanity specific
+  sys: { id: string };       // Contentful specific
+  field_price_value: number; // Drupal style
+}
+```
+
+✅ **Good (UI-Centric):**
+
+```typescript
+interface ProductDTO {
+  id: string;
+  price: number;
+  currency: string;
+}
+```
+
+**2. Flattened & Simplified**
+
+CMS responses are often deeply nested. A good DTO flattens this structure to make it easy to use in React components.
+
+❌ **Bad (Nested):**
+
+```typescript
+interface AuthorDTO {
+  data: {
+    attributes: {
+      name: string;
+      avatar: {
+        data: {
+          attributes: {
+            url: string;
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+✅ **Good (Flat):**
+
+```typescript
+interface AuthorDTO {
+  name: string;
+  avatarUrl: string;
+}
+```
+
+**3. Serializable (No Functions)**
+
+DTOs should contain **only data** (strings, numbers, booleans, arrays, objects). They should not contain functions or class instances, because they need to be passed from the Server Component (Server) to the Client Component (Browser).
+
+❌ **Bad:**
+
+```typescript
+interface UserDTO {
+  name: string;
+  getFullName(): string; // ❌ Functions don't serialize
+  createdAt: Date;       // ❌ Date objects don't serialize properly
+}
+```
+
+✅ **Good:**
+
+```typescript
+interface UserDTO {
+  name: string;
+  fullName: string;      // ✅ Computed value as a string
+  createdAt: string;     // ✅ ISO string format
+}
+```
+
+**4. Complete (Self-Contained)**
+
+A DTO should contain **all the data needed** for that specific context. Avoid "partial" DTOs where you have to guess if a field exists.
+
+❌ **Bad:**
+
+```typescript
+// Sometimes has avatar, sometimes doesn't
+interface AuthorDTO {
+  name: string;
+  avatar?: string; // When is this present? Who knows!
+}
+```
+
+✅ **Good:**
+
+```typescript
+interface AuthorDTO {
+  name: string;
+  avatar: ImageDTO | undefined; // Clear: avatar is optional but well-typed
+}
+```
+
+#### Example: The ImageDTO
+
+Your project has a perfect example of a good DTO in `lib/cms/types/dtos.ts`:
+
+```typescript
+export interface ImageDTO {
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+  blurDataURL?: string;
+}
+```
+
+**Why it's good:**
+
+1. **Universal**: Every CMS handles images differently (some have `asset->url`, some have `url`, some have `sizes`). This DTO standardizes it.
+2. **Ready for next/image**: It has exactly the props needed by the Next.js `<Image />` component (`src`, `alt`, `width`, `height`, `blurDataURL`).
+3. **Flat**: No nested objects to navigate.
+4. **Complete**: All required fields are present, optional field is clearly marked.
+
+#### How to Create a New DTO (Workflow)
+
+When you need to add a new feature (e.g., a "Testimonial"):
+
+**Step 1: Start with the UI**
+
+Write the React component first.
+
+```typescript
+// components/TestimonialCard.tsx
+export function TestimonialCard({ name, role, quote, photo }) {
+  return (
+    <div>
+      <Image {...photo} />
+      <p>{quote}</p>
+      <cite>{name}, {role}</cite>
+    </div>
+  )
+}
+```
+
+**Step 2: Define the DTO**
+
+Create the interface based on the props you just wrote.
+
+```typescript
+// lib/cms/types/dtos.ts
+export interface TestimonialDTO {
+  id: string;
+  name: string;
+  role: string;
+  quote: string;
+  photo: ImageDTO; // ✅ Reuse existing DTOs!
+}
+```
+
+**Step 3: Add to CMSService Interface**
+
+Update the `CMSService` interface with the new method.
+
+```typescript
+// lib/cms/types/index.ts
+export interface CMSService {
+  // ... existing methods
+  getTestimonials(locale: string): Promise<TestimonialDTO[]>
+}
+```
+
+**Step 4: Implement the Transformer**
+
+Write the code to convert the messy CMS response into your clean DTO.
+
+```typescript
+// lib/cms/sanity/transformer.ts
+export class SanityTransformer {
+  // ... existing methods
+
+  static transformTestimonial(sanityTestimonial: unknown): TestimonialDTO {
+    const testimonial = sanityTestimonial as Record<string, unknown>
+
+    return {
+      id: testimonial._id as string,
+      name: testimonial.name as string,
+      role: testimonial.role as string,
+      quote: testimonial.quote as string,
+      photo: this.transformImage(testimonial.photo),
+    }
+  }
+}
+```
+
+**Step 5: Implement the Service Method**
+
+Add the method to your CMS service implementation.
+
+```typescript
+// lib/cms/sanity/service.ts
+export class SanityService implements CMSService {
+  // ... existing methods
+
+  async getTestimonials(locale: string): Promise<TestimonialDTO[]> {
+    const query = `*[_type == "testimonial" && locale == $locale] {
+      _id,
+      name,
+      role,
+      quote,
+      photo
+    }`
+
+    const testimonials = await sanityClient.fetch(query, { locale })
+    return testimonials.map(SanityTransformer.transformTestimonial)
+  }
+}
+```
+
+#### Checklist for Reviewing DTOs
+
+Before finalizing a DTO, ask yourself:
+
+- [ ] Does it have any CMS-specific fields (like `_ref`, `sys`, `node`)? **(Should be NO)**
+- [ ] Is it flat and easy to access? **(Should be YES)**
+- [ ] Does it use primitive types or other DTOs? **(Should be YES)**
+- [ ] Can I switch from Sanity to Payload without changing this interface? **(Should be YES)**
+- [ ] Does it contain everything the UI component needs? **(Should be YES)**
+- [ ] Are all fields serializable (no functions, no Date objects)? **(Should be YES)**
+- [ ] Are optional fields clearly marked with `?` or `| undefined`? **(Should be YES)**
+
+#### Common DTO Patterns in This Project
+
+**Base Content DTO:**
+
+Most content types inherit from a base structure:
+
+```typescript
+interface BaseContentDTO {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  publishedAt: Date;
+  updatedAt: Date;
+  locale: string;
+}
+```
+
+**SEO Metadata DTO:**
+
+Standardized across all pages:
+
+```typescript
+interface SEOMetadata {
+  title: string;
+  description: string;
+  keywords: string[];
+  ogImage?: ImageDTO;
+  ogType: 'website' | 'article' | 'book' | 'profile';
+  twitterCard: 'summary' | 'summary_large_image';
+  canonical?: string;
+  noindex: boolean;
+  nofollow: boolean;
+}
+```
+
+**Navigation DTO:**
+
+Recursive structure for nested menus:
+
+```typescript
+interface NavItemDTO {
+  id: string;
+  label: string;
+  href: string;
+  target?: '_blank' | '_self';
+  children?: NavItemDTO[]; // ✅ Recursive for nested navigation
+}
+
+interface NavigationDTO {
+  items: NavItemDTO[];
+}
+```
+
+#### Anti-Patterns to Avoid
+
+**❌ Don't Expose Internal IDs**
+
+```typescript
+// Bad: Exposing CMS internal structure
+interface PostDTO {
+  _id: string;
+  _rev: string; // CMS revision tracking - UI doesn't need this
+}
+
+// Good: Clean abstraction
+interface PostDTO {
+  id: string;
+}
+```
+
+**❌ Don't Mix Data and Presentation Logic**
+
+```typescript
+// Bad: Mixing concerns
+interface ProductDTO {
+  price: number;
+  formattedPrice: string; // Formatting is UI concern, not data concern
+}
+
+// Good: Keep DTOs pure data
+interface ProductDTO {
+  price: number;
+  currency: string; // UI can format this however it wants
+}
+```
+
+**❌ Don't Create Generic "Any" DTOs**
+
+```typescript
+// Bad: Too generic
+interface ContentDTO {
+  type: string;
+  fields: Record<string, unknown>;
+}
+
+// Good: Specific, type-safe
+interface BlogPostDTO {
+  type: 'blogPost';
+  title: string;
+  content: unknown; // Portable Text
+}
+
+interface ProductDTO {
+  type: 'product';
+  name: string;
+  price: number;
+}
+```
+
+#### Benefits of This Approach
+
+✅ **CMS Independence**: Switch from Sanity to Payload by only changing transformers
+✅ **Type Safety**: Full TypeScript autocomplete in components
+✅ **Testing**: Easy to mock DTOs for unit tests
+✅ **Documentation**: DTOs serve as API documentation
+✅ **Refactoring**: Change CMS schema without breaking UI
+✅ **Onboarding**: New developers understand data structure instantly
+
+**Remember**: DTOs are your contract. Keep them clean, simple, and UI-focused.
+
 ---
 
 ## Internationalization
