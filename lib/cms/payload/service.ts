@@ -18,6 +18,12 @@ import type {
   PaginatedResponse,
 } from '../types'
 
+/**
+ * This is a stub implementation for template users to complete.
+ * Parameters are intentionally unused - users will implement actual Payload CMS queries.
+ * When implementing, remove the eslint-disable comment below and use all parameters.
+ */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export class PayloadService implements CMSService {
   async getPage(slug: string, locale: string): Promise<PageDTO | null> {
     // TODO: Implement Payload API call
