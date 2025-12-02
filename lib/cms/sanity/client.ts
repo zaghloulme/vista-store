@@ -3,7 +3,7 @@
  */
 
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
+import createImageUrlBuilder from '@sanity/image-url'
 
 // Use placeholder values during build if not configured
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder'
@@ -18,7 +18,7 @@ export const sanityClient = createClient({
 })
 
 // Helper for generating image URLs
-const builder = imageUrlBuilder(sanityClient)
+const builder = createImageUrlBuilder(sanityClient)
 
 export function urlForImage(source: unknown) {
   if (!source) return null

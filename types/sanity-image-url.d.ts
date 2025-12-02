@@ -5,7 +5,7 @@ declare module '@sanity/image-url' {
     SanityClientLike,
   } from '@sanity/image-url/lib/types/builder'
 
-  export default function imageUrlBuilder(
+  export default function createImageUrlBuilder(
     options: SanityClientLike
   ): ImageUrlBuilder
 
