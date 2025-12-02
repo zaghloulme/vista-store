@@ -84,10 +84,12 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
 
   # Job 4: E2E Tests
+  # Skip E2E tests when using placeholder credentials (template not yet configured)
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, test]
+    if: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID != '' }}
 
     steps:
       - name: Checkout code
@@ -130,11 +132,22 @@ jobs:
     steps:
       - name: Check if all jobs succeeded
         run: |
+          # E2E tests are optional (skipped when using placeholder credentials)
           if [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.test.result }}" != "success" ] || \
-             [ "${{ needs.build.result }}" != "success" ] || \
-             [ "${{ needs.e2e.result }}" != "success" ]; then
-            echo "One or more jobs failed"
+             [ "${{ needs.build.result }}" != "success" ]; then
+            echo "One or more required jobs failed"
             exit 1
           fi
-          echo "All jobs passed successfully!"
+
+          # Check E2E only if it ran (not skipped)
+          if [ "${{ needs.e2e.result }}" != "skipped" ] && [ "${{ needs.e2e.result }}" != "success" ]; then
+            echo "E2E tests failed"
+            exit 1
+          fi
+
+          if [ "${{ needs.e2e.result }}" == "skipped" ]; then
+            echo "All required checks passed! (E2E tests skipped - configure Sanity credentials to enable)"
+          else
+            echo "All checks passed successfully!"
+          fi
