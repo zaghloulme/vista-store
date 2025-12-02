@@ -89,7 +89,7 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, test]
-    if: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID != '' }}
+    if: secrets.NEXT_PUBLIC_SANITY_PROJECT_ID
 
     steps:
       - name: Checkout code
