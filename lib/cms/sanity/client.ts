@@ -3,7 +3,7 @@
  */
 
 import { createClient } from '@sanity/client'
-import createImageUrlBuilder from '@sanity/image-url'
+import * as imageUrlBuilder from '@sanity/image-url'
 
 // Use placeholder values during build if not configured
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder'
@@ -18,7 +18,8 @@ export const sanityClient = createClient({
 })
 
 // Helper for generating image URLs
-const builder = createImageUrlBuilder(sanityClient)
+// @ts-expect-error - Namespace import works at runtime for CommonJS modules
+const builder = imageUrlBuilder(sanityClient)
 
 export function urlForImage(source: unknown) {
   if (!source) return null
