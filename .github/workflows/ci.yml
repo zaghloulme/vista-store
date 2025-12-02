@@ -84,38 +84,50 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
 
   # Job 4: E2E Tests
-  # Skip E2E tests when using placeholder credentials (template not yet configured)
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, test]
-    if: secrets.NEXT_PUBLIC_SANITY_PROJECT_ID
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check if Sanity is configured
+        id: sanity-check
+        run: |
+          if [ -z "${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}" ]; then
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ E2E tests skipped: Sanity credentials not configured"
+            echo "To enable E2E tests, add NEXT_PUBLIC_SANITY_PROJECT_ID secret to your repository"
+          else
+            echo "configured=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Node.js
+        if: steps.sanity-check.outputs.configured == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.sanity-check.outputs.configured == 'true'
         run: npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
+        if: steps.sanity-check.outputs.configured == 'true'
         run: npx playwright install --with-deps
 
       - name: Run E2E tests
+        if: steps.sanity-check.outputs.configured == 'true'
         run: npm run test:e2e
         env:
-          # Add placeholder environment variables for E2E tests
-          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder' }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
 
       - name: Upload Playwright report
-        if: always()
+        if: always() && steps.sanity-check.outputs.configured == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
@@ -132,22 +144,11 @@ jobs:
     steps:
       - name: Check if all jobs succeeded
         run: |
-          # E2E tests are optional (skipped when using placeholder credentials)
           if [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.test.result }}" != "success" ] || \
-             [ "${{ needs.build.result }}" != "success" ]; then
-            echo "One or more required jobs failed"
+             [ "${{ needs.build.result }}" != "success" ] || \
+             [ "${{ needs.e2e.result }}" != "success" ]; then
+            echo "One or more jobs failed"
             exit 1
           fi
-
-          # Check E2E only if it ran (not skipped)
-          if [ "${{ needs.e2e.result }}" != "skipped" ] && [ "${{ needs.e2e.result }}" != "success" ]; then
-            echo "E2E tests failed"
-            exit 1
-          fi
-
-          if [ "${{ needs.e2e.result }}" == "skipped" ]; then
-            echo "All required checks passed! (E2E tests skipped - configure Sanity credentials to enable)"
-          else
-            echo "All checks passed successfully!"
-          fi
+          echo "✅ All checks passed successfully!"
