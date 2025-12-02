@@ -18,8 +18,10 @@ export const sanityClient = createClient({
 })
 
 // Helper for generating image URLs
-// @ts-expect-error - Namespace import works at runtime for CommonJS modules
-const builder = imageUrlBuilder(sanityClient)
+// CommonJS modules export via module.exports, accessible as .default with namespace imports
+const createBuilder = (imageUrlBuilder as unknown as { default: typeof imageUrlBuilder }).default || imageUrlBuilder
+// @ts-expect-error - Runtime function call
+const builder = createBuilder(sanityClient)
 
 export function urlForImage(source: unknown) {
   if (!source) return null
