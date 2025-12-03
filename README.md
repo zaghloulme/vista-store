@@ -69,13 +69,14 @@ English (en)
 
 ## Analytics Configuration
 
-- **GTM ID:** GTM-XXXXXXX (to be configured)
+- **GTM ID:** GTM-KQC99JNS
 - **Tracking Goals:**
   - Product page views
   - WhatsApp button clicks (conversions)
   - Category navigation patterns
   - Search queries
   - Time spent on product pages
+  - Homepage hero image clicks
 
 ## Design System
 
