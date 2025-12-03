@@ -1,0 +1,625 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Product Name"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "description": "Product SKU/Code",
+        "name": "sku",
+        "type": "string",
+        "title": "SKU"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "e.g., Dell, HP, Lenovo, Apple",
+        "name": "brand",
+        "type": "string",
+        "title": "Brand/Manufacturer"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "price",
+        "type": "number",
+        "title": "Price (EGP)"
+      },
+      {
+        "description": "Original price for showing discounts",
+        "name": "compareAtPrice",
+        "type": "number",
+        "title": "Compare at Price (EGP)"
+      },
+      {
+        "of": [
+          {
+            "marks": {
+              "annotations": [
+                {
+                  "i18nTitleKey": "inputs.portable-text.annotation.link",
+                  "options": {
+                    "modal": {
+                      "type": "popover"
+                    }
+                  },
+                  "fields": [
+                    {
+                      "validation": [
+                        {
+                          "rules": [
+                            {
+                              "flag": "uri",
+                              "constraint": {
+                                "options": {
+                                  "scheme": [
+                                    "/^http$/",
+                                    "/^https$/",
+                                    "/^tel$/",
+                                    "/^mailto$/"
+                                  ],
+                                  "allowRelative": true,
+                                  "relativeOnly": false,
+                                  "allowCredentials": false
+                                }
+                              }
+                            }
+                          ],
+                          "level": "error"
+                        }
+                      ],
+                      "description": "A valid web, email, phone, or relative link.",
+                      "name": "href",
+                      "type": "url",
+                      "title": "Link"
+                    }
+                  ],
+                  "name": "link",
+                  "type": "object"
+                }
+              ],
+              "decorators": [
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Italic"
+                },
+                {
+                  "value": "code",
+                  "title": "Code"
+                },
+                {
+                  "value": "underline",
+                  "title": "Underline"
+                },
+                {
+                  "value": "strike-through",
+                  "title": "Strike"
+                }
+              ]
+            },
+            "lists": [
+              {
+                "value": "bullet",
+                "title": "Bulleted list"
+              },
+              {
+                "value": "number",
+                "title": "Numbered list"
+              }
+            ],
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              },
+              {
+                "value": "h1",
+                "title": "Heading 1"
+              },
+              {
+                "value": "h2",
+                "title": "Heading 2"
+              },
+              {
+                "value": "h3",
+                "title": "Heading 3"
+              },
+              {
+                "value": "h4",
+                "title": "Heading 4"
+              },
+              {
+                "value": "h5",
+                "title": "Heading 5"
+              },
+              {
+                "value": "h6",
+                "title": "Heading 6"
+              },
+              {
+                "value": "blockquote",
+                "title": "Quote"
+              }
+            ],
+            "of": [],
+            "type": "block"
+          }
+        ],
+        "name": "description",
+        "type": "array"
+      },
+      {
+        "rows": 3,
+        "description": "Brief description for catalog view",
+        "name": "shortDescription",
+        "type": "text"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt Text"
+              }
+            ],
+            "type": "image"
+          }
+        ],
+        "name": "images",
+        "type": "array",
+        "title": "Product Images"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "to": [
+          {
+            "type": "category"
+          }
+        ],
+        "name": "category",
+        "type": "reference"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "name": "label",
+                "type": "string"
+              },
+              {
+                "name": "value",
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "specifications",
+        "type": "array"
+      },
+      {
+        "initialValue": true,
+        "name": "inStock",
+        "type": "boolean"
+      },
+      {
+        "initialValue": false,
+        "description": "Show on homepage",
+        "name": "featured",
+        "type": "boolean",
+        "title": "Featured Product"
+      },
+      {
+        "fields": [
+          {
+            "name": "title",
+            "type": "string",
+            "title": "SEO Title"
+          },
+          {
+            "rows": 3,
+            "name": "description",
+            "type": "text",
+            "title": "Meta Description"
+          },
+          {
+            "of": [
+              {
+                "type": "string"
+              }
+            ],
+            "name": "keywords",
+            "type": "array"
+          }
+        ],
+        "name": "seo",
+        "type": "object",
+        "title": "SEO"
+      },
+      {
+        "name": "publishedAt",
+        "type": "datetime"
+      }
+    ],
+    "name": "product",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Category Name"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "rows": 3,
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "image",
+        "type": "image",
+        "title": "Category Image"
+      },
+      {
+        "description": "Lower numbers appear first",
+        "name": "order",
+        "type": "number",
+        "title": "Display Order"
+      },
+      {
+        "initialValue": true,
+        "name": "showInNavigation",
+        "type": "boolean",
+        "title": "Show in Navigation"
+      }
+    ],
+    "name": "category",
+    "type": "document",
+    "title": "Product Category"
+  },
+  {
+    "fields": [
+      {
+        "name": "heroTitle",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "name": "heroSubtitle",
+        "type": "text"
+      },
+      {
+        "fields": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt Text"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "link",
+                "type": "url",
+                "title": "Link URL (optional)"
+              }
+            ],
+            "name": "mainImage",
+            "type": "image",
+            "title": "Main Image (Large)"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt Text"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "link",
+                "type": "url",
+                "title": "Link URL (optional)"
+              }
+            ],
+            "name": "topImage",
+            "type": "image",
+            "title": "Top Right Image"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt Text"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "link",
+                "type": "url",
+                "title": "Link URL (optional)"
+              }
+            ],
+            "name": "bottomImage",
+            "type": "image",
+            "title": "Bottom Right Image"
+          }
+        ],
+        "name": "heroImages",
+        "type": "object",
+        "title": "Hero Images (3 required)"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 6
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "of": [
+          {
+            "to": [
+              {
+                "type": "category"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to product category"
+          }
+        ],
+        "name": "featuredCategories",
+        "type": "array"
+      },
+      {
+        "description": "Format: +201XXXXXXXXX",
+        "name": "whatsappNumber",
+        "type": "string",
+        "title": "WhatsApp Number"
+      },
+      {
+        "initialValue": "Alexandria, Egypt",
+        "name": "storeLocation",
+        "type": "string"
+      }
+    ],
+    "name": "homepage",
+    "type": "document",
+    "title": "Homepage Settings"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "createdAt": "2025-12-03T18:26:16.453Z",
+  "workspaces": [
+    {
+      "name": "default",
+      "title": "Vista Store",
+      "basePath": "/",
+      "projectId": "27p8z5ah",
+      "dataset": "production",
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect width=\"32\" height=\"32\" rx=\"2\" fill=\"#024950\"></rect><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" alignment-baseline=\"middle\" fill=\"hsla(185, 95%, 56%, 1)\" class=\"sc-gzpDuk cLsLzf\">VS</text></svg>",
+      "mediaLibrary": {
+        "enabled": false
+      },
+      "schema": "9130a79a.create-schema.json",
+      "tools": "e5b3d0b1.create-tools.json"
+    }
+  ],
+  "studioVersion": "4.20.0"
+}
