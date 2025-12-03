@@ -5,9 +5,17 @@
 
 import { notFound } from 'next/navigation'
 import { GoogleTagManager } from '@next/third-parties/google'
+import { Inter } from 'next/font/google'
 import { locales, localeDirections } from '@/i18n/config'
 import { PageViewTracker } from '@/components/PageViewTracker'
 import '../globals.css'
+
+// Configure Inter font from Google Fonts
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -32,9 +40,9 @@ export default async function RootLayout({
   const direction = localeDirections[locale as keyof typeof localeDirections]
 
   return (
-    <html lang={locale} dir={direction}>
+    <html lang={locale} dir={direction} className={inter.variable}>
       {gtmId && <GoogleTagManager gtmId={gtmId} />}
-      <body>
+      <body className={inter.className}>
         {gtmId && <PageViewTracker />}
         {children}
       </body>

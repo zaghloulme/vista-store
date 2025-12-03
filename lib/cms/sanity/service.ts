@@ -10,6 +10,11 @@ import type {
   NavigationDTO,
   BlogPostDTO,
   PaginatedResponse,
+  ProductDTO,
+  ProductsResponse,
+  CategoryDTO,
+  CategoriesResponse,
+  HomepageDTO,
 } from '../types'
 import { sanityClient } from './client'
 import { SanityTransformer } from './transformer'
@@ -225,5 +230,211 @@ export class SanityService implements CMSService {
   async getAllPostSlugs(locale: string): Promise<string[]> {
     const query = `*[_type == "post" && locale == $locale].slug.current`
     return sanityClient.fetch(query, { locale })
+  }
+
+  async getProducts(params?: {
+    category?: string
+    brand?: string
+    featured?: boolean
+    minPrice?: number
+    maxPrice?: number
+    limit?: number
+    offset?: number
+    search?: string
+  }): Promise<ProductsResponse> {
+    const limit = params?.limit || 20
+    const offset = params?.offset || 0
+    const end = offset + limit
+
+    // Build filter conditions
+    let filters = `_type == "product"`
+    const queryParams: Record<string, unknown> = {}
+
+    if (params?.category) {
+      filters += ` && category->slug.current == $category`
+      queryParams.category = params.category
+    }
+
+    if (params?.brand) {
+      filters += ` && brand == $brand`
+      queryParams.brand = params.brand
+    }
+
+    if (params?.featured !== undefined) {
+      filters += ` && featured == $featured`
+      queryParams.featured = params.featured
+    }
+
+    if (params?.minPrice !== undefined) {
+      filters += ` && price >= $minPrice`
+      queryParams.minPrice = params.minPrice
+    }
+
+    if (params?.maxPrice !== undefined) {
+      filters += ` && price <= $maxPrice`
+      queryParams.maxPrice = params.maxPrice
+    }
+
+    if (params?.search) {
+      // Search in name, brand, and description
+      filters += ` && (
+        name match $search ||
+        brand match $search ||
+        description match $search
+      )`
+      queryParams.search = `*${params.search}*`
+    }
+
+    // Get total count
+    const countQuery = `count(*[${filters}])`
+    const total = await sanityClient.fetch(countQuery, queryParams)
+
+    // Get paginated products
+    const query = `*[${filters}] | order(featured desc, _createdAt desc) [${offset}...${end}] {
+      _id,
+      _createdAt,
+      name,
+      slug,
+      sku,
+      brand,
+      price,
+      compareAtPrice,
+      description,
+      shortDescription,
+      images[] {
+        asset->,
+        alt
+      },
+      category->{
+        _id,
+        name,
+        slug,
+        description,
+        image,
+        order,
+        showInNavigation
+      },
+      specifications,
+      inStock,
+      featured,
+      seo,
+      publishedAt
+    }`
+
+    const products = await sanityClient.fetch(query, queryParams)
+
+    return {
+      data: products.map(SanityTransformer.transformProduct),
+      total,
+      limit,
+      offset,
+    }
+  }
+
+  async getProductBySlug(slug: string): Promise<ProductDTO | null> {
+    const query = `*[_type == "product" && slug.current == $slug][0] {
+      _id,
+      _createdAt,
+      name,
+      slug,
+      sku,
+      brand,
+      price,
+      compareAtPrice,
+      description,
+      shortDescription,
+      images[] {
+        asset->,
+        alt
+      },
+      category->{
+        _id,
+        name,
+        slug,
+        description,
+        image,
+        order,
+        showInNavigation
+      },
+      specifications,
+      inStock,
+      featured,
+      seo,
+      publishedAt
+    }`
+
+    const product = await sanityClient.fetch(query, { slug })
+    return product ? SanityTransformer.transformProduct(product) : null
+  }
+
+  async getCategories(): Promise<CategoriesResponse> {
+    const query = `*[_type == "category"] | order(order asc) {
+      _id,
+      name,
+      slug,
+      description,
+      image,
+      order,
+      showInNavigation
+    }`
+
+    const categories = await sanityClient.fetch(query)
+
+    return {
+      categories: categories.map(SanityTransformer.transformCategory),
+    }
+  }
+
+  async getCategoryBySlug(slug: string): Promise<CategoryDTO | null> {
+    const query = `*[_type == "category" && slug.current == $slug][0] {
+      _id,
+      name,
+      slug,
+      description,
+      image,
+      order,
+      showInNavigation
+    }`
+
+    const category = await sanityClient.fetch(query, { slug })
+    return category ? SanityTransformer.transformCategory(category) : null
+  }
+
+  async getHomepageSettings(): Promise<HomepageDTO | null> {
+    const query = `*[_type == "homepage"][0] {
+      heroTitle,
+      heroSubtitle,
+      heroImages {
+        mainImage {
+          asset->,
+          alt,
+          link
+        },
+        topImage {
+          asset->,
+          alt,
+          link
+        },
+        bottomImage {
+          asset->,
+          alt,
+          link
+        }
+      },
+      featuredCategories[]->{
+        _id,
+        name,
+        slug,
+        description,
+        image,
+        order,
+        showInNavigation
+      },
+      whatsappNumber,
+      storeLocation
+    }`
+
+    const homepage = await sanityClient.fetch(query)
+    return homepage ? SanityTransformer.transformHomepage(homepage) : null
   }
 }

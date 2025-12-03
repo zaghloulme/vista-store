@@ -11,6 +11,9 @@ import type {
   BlogPostDTO,
   ImageDTO,
   SEOMetadata,
+  ProductDTO,
+  CategoryDTO,
+  HomepageDTO,
 } from '../types/dtos'
 import { urlForImage } from './client'
 
@@ -158,6 +161,135 @@ export class SanityTransformer {
       tags: (post.tags as string[]) || [],
       featuredImage: this.transformImage(post.featuredImage),
       estimatedReadingTime: post.estimatedReadingTime as number,
+    }
+  }
+
+  /**
+   * Transform Sanity category to CategoryDTO
+   */
+  static transformCategory(sanityCategory: unknown): CategoryDTO {
+    const category = sanityCategory as Record<string, unknown>
+    return {
+      id: category._id as string,
+      name: (category.name as string) || '',
+      slug: (category.slug as Record<string, unknown>)?.current as string || '',
+      description: category.description as string,
+      image: this.transformImage(category.image),
+      order: category.order as number,
+      showInNavigation: (category.showInNavigation as boolean) ?? true,
+    }
+  }
+
+  /**
+   * Transform Sanity product to ProductDTO
+   */
+  static transformProduct(sanityProduct: unknown): ProductDTO {
+    const product = sanityProduct as Record<string, unknown>
+    const category = product.category as Record<string, unknown>
+
+    // Transform all product images
+    const images = (product.images as unknown[] || [])
+      .map((img) => this.transformImage(img))
+      .filter((img): img is ImageDTO => img !== undefined)
+
+    // Transform specifications
+    const specifications = (product.specifications as Array<Record<string, unknown>> || [])
+      .map((spec) => ({
+        label: spec.label as string,
+        value: spec.value as string,
+      }))
+
+    // Build SEO metadata
+    const seo: SEOMetadata = product.seo
+      ? this.transformSEO(product.seo)
+      : {
+          title: `${product.name as string} | Vista Store`,
+          description: (product.shortDescription as string) || (product.description as string) || '',
+          keywords: [
+            product.name as string,
+            product.brand as string,
+            category?.name as string,
+          ].filter(Boolean),
+          ogImage: images[0],
+          ogType: 'product',
+          twitterCard: 'summary_large_image',
+          noindex: false,
+          nofollow: false,
+        }
+
+    return {
+      id: product._id as string,
+      name: (product.name as string) || '',
+      slug: (product.slug as Record<string, unknown>)?.current as string || '',
+      sku: product.sku as string,
+      brand: (product.brand as string) || '',
+      price: (product.price as number) || 0,
+      compareAtPrice: product.compareAtPrice as number,
+      description: (product.description as string) || '',
+      shortDescription: product.shortDescription as string,
+      images,
+      category: category ? this.transformCategory(category) : {
+        id: '',
+        name: 'Uncategorized',
+        slug: 'uncategorized',
+        showInNavigation: false,
+      },
+      specifications,
+      inStock: (product.inStock as boolean) ?? true,
+      featured: (product.featured as boolean) ?? false,
+      seo,
+      publishedAt: new Date((product.publishedAt || product._createdAt) as string),
+    }
+  }
+
+  /**
+   * Transform Sanity homepage to HomepageDTO
+   */
+  static transformHomepage(sanityHomepage: unknown): HomepageDTO {
+    const homepage = sanityHomepage as Record<string, unknown>
+    const heroImages = homepage.heroImages as Record<string, unknown> || {}
+
+    // Transform hero images with links
+    const mainImage = heroImages.mainImage as Record<string, unknown>
+    const topImage = heroImages.topImage as Record<string, unknown>
+    const bottomImage = heroImages.bottomImage as Record<string, unknown>
+
+    const transformImageWithLink = (img: Record<string, unknown>) => {
+      const transformed = this.transformImage(img)
+      return transformed ? { ...transformed, link: img.link as string } : undefined
+    }
+
+    // Transform featured categories (resolve references)
+    const featuredCategories = (homepage.featuredCategories as unknown[] || [])
+      .map((cat) => this.transformCategory(cat))
+      .filter((cat): cat is CategoryDTO => cat !== undefined)
+
+    return {
+      heroTitle: homepage.heroTitle as string,
+      heroSubtitle: homepage.heroSubtitle as string,
+      heroImages: {
+        mainImage: transformImageWithLink(mainImage) || {
+          url: '',
+          alt: '',
+          width: 1200,
+          height: 630,
+        },
+        topImage: transformImageWithLink(topImage) || {
+          url: '',
+          alt: '',
+          width: 600,
+          height: 400,
+        },
+        bottomImage: transformImageWithLink(bottomImage) || {
+          url: '',
+          alt: '',
+          width: 600,
+          height: 400,
+        },
+      },
+      featuredCategories,
+      whatsappNumber: homepage.whatsappNumber as string,
+      storeLocation: homepage.storeLocation as string,
     }
   }
 }
