@@ -92,6 +92,52 @@ export interface CategoryDTO {
   name: string
   slug: string
   description?: string
+  image?: ImageDTO
+  order?: number
+  showInNavigation: boolean
+}
+
+export interface ProductDTO {
+  id: string
+  name: string
+  slug: string
+  sku?: string
+  brand: string
+  price: number
+  compareAtPrice?: number
+  description: string
+  shortDescription?: string
+  images: ImageDTO[]
+  category: CategoryDTO
+  specifications?: Array<{ label: string; value: string }>
+  inStock: boolean
+  featured: boolean
+  seo: SEOMetadata
+  publishedAt: Date
+}
+
+export interface HomepageDTO {
+  heroTitle?: string
+  heroSubtitle?: string
+  heroImages: {
+    mainImage: ImageDTO & { link?: string }
+    topImage: ImageDTO & { link?: string }
+    bottomImage: ImageDTO & { link?: string }
+  }
+  featuredCategories: CategoryDTO[]
+  whatsappNumber?: string
+  storeLocation?: string
+}
+
+export interface ProductsResponse {
+  data: ProductDTO[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export interface CategoriesResponse {
+  categories: CategoryDTO[]
 }
 
 /**

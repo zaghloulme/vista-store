@@ -10,6 +10,11 @@ import type {
   NavigationDTO,
   BlogPostDTO,
   PaginatedResponse,
+  ProductDTO,
+  ProductsResponse,
+  CategoryDTO,
+  CategoriesResponse,
+  HomepageDTO,
 } from './dtos'
 
 export * from './dtos'
@@ -62,4 +67,38 @@ export interface CMSService {
    * Get all blog post slugs for a specific locale (used for static generation)
    */
   getAllPostSlugs(locale: string): Promise<string[]>
+
+  /**
+   * Get products with optional filtering
+   */
+  getProducts(params?: {
+    category?: string
+    brand?: string
+    featured?: boolean
+    minPrice?: number
+    maxPrice?: number
+    limit?: number
+    offset?: number
+    search?: string
+  }): Promise<ProductsResponse>
+
+  /**
+   * Get a single product by slug
+   */
+  getProductBySlug(slug: string): Promise<ProductDTO | null>
+
+  /**
+   * Get all product categories
+   */
+  getCategories(): Promise<CategoriesResponse>
+
+  /**
+   * Get a single category by slug
+   */
+  getCategoryBySlug(slug: string): Promise<CategoryDTO | null>
+
+  /**
+   * Get homepage settings
+   */
+  getHomepageSettings(): Promise<HomepageDTO | null>
 }

@@ -1,26 +1,29 @@
-# {{PROJECT_NAME}}
+# Vista Store
 
-<!-- TODO: Replace OWNER/REPO with your GitHub repository path -->
-[![CI/CD Pipeline](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/zaghloulme/vista-store/actions/workflows/ci.yml/badge.svg)](https://github.com/zaghloulme/vista-store/actions/workflows/ci.yml)
 
-> AI-friendly Next.js template with swappable CMS, comprehensive SEO, and multi-language support
+> E-commerce platform for Vista Store - Leading tech and laptop retailer in Alexandria, Egypt
 
 ## Project Overview
 
-{{PROJECT_DESCRIPTION}}
+E-commerce platform for Vista Store, Alexandria's leading tech and laptop retailer. Customers browse products and complete purchases via WhatsApp with our customer service team.
 
-**Industry:** {{INDUSTRY}}
-**Target Audience:** {{TARGET_AUDIENCE}}
+**Industry:** Tech Retail & E-commerce
+**Target Audience:** Tech enthusiasts and young professionals in Egypt
 
 ## Business Goals
 
-{{BUSINESS_GOALS}}
+- Drive qualified leads from social media to website
+- Showcase product catalog with detailed specifications
+- Convert browsers to WhatsApp conversations
+- Provide seamless mobile shopping experience
+- Track customer journey from view to conversion
 
 ## Technical Stack
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **CMS:** {{CMS_PROVIDER}}
+- **CMS:** Sanity
 - **Styling:** Tailwind CSS 4
 - **i18n:** next-intl (UI) + CMS (content)
 - **Analytics:** Google Tag Manager
@@ -29,12 +32,22 @@
 
 ### Supported Languages
 
-{{LOCALES}}
+English (en)
 
 
 ## Features
 
-{{FEATURES_LIST}}
+- Product catalog with categories and advanced filtering (price, brand, specifications)
+- WhatsApp "Buy Now" integration with pre-filled messages (per-product)
+- Mobile-first responsive design
+- High-quality product images with zoom
+- Category-based navigation
+- Real-time product search functionality
+- Split-hero homepage design with clickable images
+- Product filtering by price range, brand, and specifications
+- Customer testimonials section
+- Contact information and store location
+- English numeral pricing (EGP)
 
 ### Core Features (Included)
 
@@ -49,18 +62,30 @@
 
 ## Integrations
 
-{{INTEGRATIONS}}
+- Sanity CMS for content management
+- WhatsApp Business API for purchase flow
+- Google Tag Manager for analytics
+- Vercel for hosting and deployment
 
 ## Analytics Configuration
 
-- **GTM ID:** {{GTM_ID}}
-- **Tracking Goals:** {{TRACKING_GOALS}}
+- **GTM ID:** GTM-XXXXXXX (to be configured)
+- **Tracking Goals:**
+  - Product page views
+  - WhatsApp button clicks (conversions)
+  - Category navigation patterns
+  - Search queries
+  - Time spent on product pages
 
 ## Design System
 
-- **Brand Colors:** {{BRAND_COLORS}}
-- **Fonts:** {{FONTS}}
-- **Style:** {{DESIGN_STYLE}}
+- **Brand Colors:**
+  - Primary: Black (#000000) and White (#FFFFFF)
+  - Accent Blue: #0986B6
+  - Accent Green: #5B8A3C
+  - Accent Gold: #EBF0B0
+- **Fonts:** Inter (Google Fonts)
+- **Style:** Modern-bold with clean layouts, high-contrast imagery, mobile-first approach
 
 ## Getting Started
 
@@ -76,8 +101,8 @@
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd {{PROJECT_NAME}}
+git clone https://github.com/zaghloulme/vista-store.git
+cd vista-store
 
 # Install dependencies
 npm install
@@ -94,23 +119,22 @@ Create a `.env.local` file with the following variables:
 
 ```env
 # Site Configuration
-NEXT_PUBLIC_SITE_URL={{SITE_URL}}
-NEXT_PUBLIC_SITE_NAME={{PROJECT_NAME}}
+NEXT_PUBLIC_SITE_URL=https://vista-store.com
+NEXT_PUBLIC_SITE_NAME=Vista Store
 
 # CMS Configuration
-CMS_PROVIDER={{CMS_PROVIDER}}
+CMS_PROVIDER=sanity
 
-# Sanity (if using Sanity)
+# Sanity
 NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=your-api-token
 
-# Payload (if using Payload)
-PAYLOAD_SECRET=your-secret
-DATABASE_URI=mongodb://localhost/payload
-
 # Analytics
-NEXT_PUBLIC_GTM_ID={{GTM_ID}}
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
+
+# WhatsApp Configuration
+NEXT_PUBLIC_WHATSAPP_NUMBER=+201XXXXXXXXX
 ```
 
 ### CMS Setup
@@ -282,15 +306,25 @@ This section provides context for AI development tools like Claude Code, GitHub 
 
 ### Business Requirements
 
-{{AI_BUSINESS_CONTEXT}}
+Vista Store is a premium tech retailer in Alexandria, Egypt, specializing in laptops, tech accessories, and bags. The business prioritizes quality products and excellent customer service. The website's primary goal is to drive social media traffic to a product catalog, then convert browsers into WhatsApp conversations where the sales team completes purchases. This model leverages Egypt's high WhatsApp adoption rate and preference for personalized service.
 
 ### Technical Constraints
 
-{{AI_TECHNICAL_CONSTRAINTS}}
+- Mobile-first design is critical (80%+ mobile traffic expected)
+- Optimize for slower 3G/4G connections common in Egypt
+- WhatsApp deep linking must work on iOS and Android
+- Image optimization essential for mobile data consumption
+- Categories must be dynamic (managed via CMS, not hardcoded)
+- SEO optimized for Egyptian market (Google.eg)
 
 ### Development Priorities
 
-{{AI_DEV_PRIORITIES}}
+1. Mobile performance and responsiveness
+2. SEO for Egyptian market
+3. WhatsApp integration reliability
+4. Image loading optimization
+5. Intuitive category navigation
+6. Fast page load times (<3s on 4G)
 
 ## Scripts
 

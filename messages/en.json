@@ -1,17 +1,36 @@
 {
   "common": {
     "loading": "Loading...",
-    "error": "An error occurred",
-    "notFound": "Not found"
+    "error": "Something went wrong",
+    "notFound": "Not Found",
+    "buyNow": "Buy Now on WhatsApp",
+    "viewDetails": "View Details",
+    "search": "Search products..."
   },
   "nav": {
     "home": "Home",
-    "about": "About",
-    "blog": "Blog",
+    "products": "Products",
+    "categories": "Categories",
+    "about": "About Us",
     "contact": "Contact"
   },
+  "product": {
+    "price": "Price",
+    "category": "Category",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "specifications": "Specifications",
+    "description": "Description",
+    "relatedProducts": "You May Also Like"
+  },
+  "whatsapp": {
+    "ctaButton": "Order via WhatsApp",
+    "ctaSubtext": "Chat with our team to complete your purchase",
+    "messageTemplate": "Hello! I'm interested in this product:"
+  },
   "footer": {
-    "copyright": "© {year} {siteName}. All rights reserved.",
-    "poweredBy": "Powered by Next.js"
+    "copyright": "© 2025 Vista Store. All rights reserved.",
+    "location": "Alexandria, Egypt",
+    "followUs": "Follow Us"
   }
 }
