@@ -10,15 +10,34 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 
+// Force dynamic rendering during build to handle CMS configuration
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const cms = getCMSService()
 
-  // Fetch homepage data
-  const [homepageData, featuredProducts, categories] = await Promise.all([
-    cms.getHomepageSettings(),
-    cms.getProducts({ featured: true, limit: 8 }),
-    cms.getCategories(),
-  ])
+  // Fetch homepage data with error handling
+  let homepageData: Awaited<ReturnType<typeof cms.getHomepageSettings>> = null
+  let featuredProducts: Awaited<ReturnType<typeof cms.getProducts>> = {
+    data: [],
+    total: 0,
+    limit: 8,
+    offset: 0,
+  }
+  let categories: Awaited<ReturnType<typeof cms.getCategories>> = {
+    categories: [],
+  }
+
+  try {
+    ;[homepageData, featuredProducts, categories] = await Promise.all([
+      cms.getHomepageSettings(),
+      cms.getProducts({ featured: true, limit: 8 }),
+      cms.getCategories(),
+    ])
+  } catch (error) {
+    // Gracefully handle CMS errors during build (Sanity not configured yet)
+    console.warn('CMS not configured - showing placeholder content:', error)
+  }
 
   // Get WhatsApp number from homepage settings or env
   const whatsappNumber =

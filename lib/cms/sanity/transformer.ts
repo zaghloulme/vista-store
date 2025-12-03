@@ -149,15 +149,9 @@ export class SanityTransformer {
             social: author.social as Record<string, string>,
           }
         : undefined,
-      categories: (post.categories as unknown[])?.map((cat) => {
-        const category = cat as Record<string, unknown>
-        return {
-          id: category._id as string,
-          name: category.name as string,
-          slug: (category.slug as Record<string, unknown>)?.current as string,
-          description: category.description as string,
-        }
-      }),
+      categories: (post.categories as unknown[])?.map((cat) =>
+        this.transformCategory(cat)
+      ),
       tags: (post.tags as string[]) || [],
       featuredImage: this.transformImage(post.featuredImage),
       estimatedReadingTime: post.estimatedReadingTime as number,

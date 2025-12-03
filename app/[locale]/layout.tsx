@@ -3,6 +3,7 @@
  * Provides i18n context and global styles
  */
 
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { GoogleTagManager } from '@next/third-parties/google'
 import { Inter } from 'next/font/google'
@@ -43,7 +44,11 @@ export default async function RootLayout({
     <html lang={locale} dir={direction} className={inter.variable}>
       {gtmId && <GoogleTagManager gtmId={gtmId} />}
       <body className={inter.className}>
-        {gtmId && <PageViewTracker />}
+        {gtmId && (
+          <Suspense fallback={null}>
+            <PageViewTracker />
+          </Suspense>
+        )}
         {children}
       </body>
     </html>

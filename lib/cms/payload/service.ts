@@ -16,6 +16,11 @@ import type {
   NavigationDTO,
   BlogPostDTO,
   PaginatedResponse,
+  ProductDTO,
+  ProductsResponse,
+  CategoryDTO,
+  CategoriesResponse,
+  HomepageDTO,
 } from '../types'
 
 /**
@@ -92,5 +97,51 @@ export class PayloadService implements CMSService {
     // TODO: Implement Payload API call
     console.warn('Payload service not fully implemented. Please configure Payload CMS.')
     return []
+  }
+
+  async getProducts(params?: {
+    category?: string
+    brand?: string
+    featured?: boolean
+    minPrice?: number
+    maxPrice?: number
+    limit?: number
+    offset?: number
+    search?: string
+  }): Promise<ProductsResponse> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return {
+      data: [],
+      total: 0,
+      limit: params?.limit || 20,
+      offset: params?.offset || 0,
+    }
+  }
+
+  async getProductBySlug(slug: string): Promise<ProductDTO | null> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return null
+  }
+
+  async getCategories(): Promise<CategoriesResponse> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return {
+      categories: [],
+    }
+  }
+
+  async getCategoryBySlug(slug: string): Promise<CategoryDTO | null> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return null
+  }
+
+  async getHomepageSettings(): Promise<HomepageDTO | null> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return null
   }
 }
