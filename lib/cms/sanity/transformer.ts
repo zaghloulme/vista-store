@@ -52,7 +52,7 @@ export class SanityTransformer {
       title: (seo?.title as string) || '',
       description: (seo?.description as string) || '',
       keywords: (seo?.keywords as string[]) || [],
-      ogImage: this.transformImage(seo?.ogImage),
+      ogImage: SanityTransformer.transformImage(seo?.ogImage),
       ogType: (seo?.ogType as string) || 'website',
       twitterCard: (seo?.twitterCard as 'summary' | 'summary_large_image') || 'summary_large_image',
       canonical: seo?.canonical as string,
@@ -72,7 +72,7 @@ export class SanityTransformer {
       title: (page.title as string) || '',
       description: (page.description as string) || '',
       content: page.content, // Keep Portable Text as-is
-      seo: this.transformSEO(page.seo),
+      seo: SanityTransformer.transformSEO(page.seo),
       publishedAt: new Date((page.publishedAt || page._createdAt) as string),
       updatedAt: new Date(page._updatedAt as string),
       locale: (page.locale as string) || 'en',
@@ -89,8 +89,8 @@ export class SanityTransformer {
       siteName: (settings.siteName as string) || 'My Site',
       siteUrl: (settings.siteUrl as string) || '',
       siteDescription: (settings.siteDescription as string) || '',
-      logo: this.transformImage(settings.logo),
-      favicon: this.transformImage(settings.favicon),
+      logo: SanityTransformer.transformImage(settings.logo),
+      favicon: SanityTransformer.transformImage(settings.favicon),
       social: {
         facebook: social.facebook as string,
         twitter: social.twitter as string,
@@ -133,7 +133,7 @@ export class SanityTransformer {
    * Transform Sanity blog post to BlogPostDTO
    */
   static transformPost(sanityPost: unknown): BlogPostDTO {
-    const basePage = this.transformPage(sanityPost)
+    const basePage = SanityTransformer.transformPage(sanityPost)
     const post = sanityPost as Record<string, unknown>
     const author = post.author as Record<string, unknown>
 
@@ -145,15 +145,15 @@ export class SanityTransformer {
             id: author._id as string,
             name: author.name as string,
             bio: author.bio as string,
-            avatar: this.transformImage(author.avatar),
+            avatar: SanityTransformer.transformImage(author.avatar),
             social: author.social as Record<string, string>,
           }
         : undefined,
       categories: (post.categories as unknown[])?.map((cat) =>
-        this.transformCategory(cat)
+        SanityTransformer.transformCategory(cat)
       ),
       tags: (post.tags as string[]) || [],
-      featuredImage: this.transformImage(post.featuredImage),
+      featuredImage: SanityTransformer.transformImage(post.featuredImage),
       estimatedReadingTime: post.estimatedReadingTime as number,
     }
   }
@@ -168,7 +168,7 @@ export class SanityTransformer {
       name: (category.name as string) || '',
       slug: (category.slug as Record<string, unknown>)?.current as string || '',
       description: category.description as string,
-      image: this.transformImage(category.image),
+      image: SanityTransformer.transformImage(category.image),
       order: category.order as number,
       showInNavigation: (category.showInNavigation as boolean) ?? true,
     }
@@ -183,7 +183,7 @@ export class SanityTransformer {
 
     // Transform all product images
     const images = (product.images as unknown[] || [])
-      .map((img) => this.transformImage(img))
+      .map((img) => SanityTransformer.transformImage(img))
       .filter((img): img is ImageDTO => img !== undefined)
 
     // Transform specifications
@@ -195,7 +195,7 @@ export class SanityTransformer {
 
     // Build SEO metadata
     const seo: SEOMetadata = product.seo
-      ? this.transformSEO(product.seo)
+      ? SanityTransformer.transformSEO(product.seo)
       : {
           title: `${product.name as string} | Vista Store`,
           description: (product.shortDescription as string) || (product.description as string) || '',
@@ -222,7 +222,7 @@ export class SanityTransformer {
       description: (product.description as string) || '',
       shortDescription: product.shortDescription as string,
       images,
-      category: category ? this.transformCategory(category) : {
+      category: category ? SanityTransformer.transformCategory(category) : {
         id: '',
         name: 'Uncategorized',
         slug: 'uncategorized',
@@ -249,13 +249,13 @@ export class SanityTransformer {
     const bottomImage = heroImages.bottomImage as Record<string, unknown>
 
     const transformImageWithLink = (img: Record<string, unknown>) => {
-      const transformed = this.transformImage(img)
+      const transformed = SanityTransformer.transformImage(img)
       return transformed ? { ...transformed, link: img.link as string } : undefined
     }
 
     // Transform featured categories (resolve references)
     const featuredCategories = (homepage.featuredCategories as unknown[] || [])
-      .map((cat) => this.transformCategory(cat))
+      .map((cat) => SanityTransformer.transformCategory(cat))
       .filter((cat): cat is CategoryDTO => cat !== undefined)
 
     return {
