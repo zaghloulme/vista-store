@@ -22,16 +22,16 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@next/third-parties": "^16.0.6",
+    "@next/third-parties": "^16.0.7",
     "@sanity/client": "^7.13.1",
-    "@sanity/image-url": "^2.0.1",
+    "@sanity/image-url": "^2.0.2",
     "dotenv": "^17.2.3",
-    "next": "16.0.6",
-    "next-intl": "^4.5.7",
+    "next": "16.0.7",
+    "next-intl": "^4.5.8",
     "next-sanity": "^11.6.10",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "sanity": "^4.20.0"
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "sanity": "^4.20.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
@@ -44,13 +44,13 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9",
-    "eslint-config-next": "16.0.6",
+    "eslint-config-next": "16.0.7",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
     "lint-staged": "^16.2.7",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   }
 }
