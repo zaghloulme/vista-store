@@ -16,7 +16,7 @@ import {
 
 interface ProductCardProps {
   product: ProductDTO
-  whatsappNumber: string
+  whatsappNumber?: string
   priority?: boolean
 }
 
@@ -114,16 +114,18 @@ export default function ProductCard({
         <div className="flex gap-2">
           {product.inStock ? (
             <>
-              <WhatsAppButton
-                product={product}
-                phoneNumber={whatsappNumber}
-                variant="primary"
-                size="md"
-                className="flex-1"
-              />
+              {whatsappNumber && (
+                <WhatsAppButton
+                  product={product}
+                  phoneNumber={whatsappNumber}
+                  variant="primary"
+                  size="md"
+                  className="flex-1"
+                />
+              )}
               <Link
                 href={`/products/${product.slug}`}
-                className="inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-black border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                className={`inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-black border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${!whatsappNumber ? 'w-full' : ''}`}
               >
                 {t('viewDetails')}
               </Link>
