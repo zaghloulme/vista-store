@@ -1,0 +1,72 @@
+/**
+ * Scroll-triggered animations
+ * Applied when elements enter viewport using IntersectionObserver
+ */
+
+/* Base state - hidden before animation */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Visible state - after entering viewport */
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide in from left */
+.animate-slide-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide in from right */
+.animate-slide-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale up animation */
+.animate-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered children animation */
+.animate-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; }
+.animate-stagger.visible > *:nth-child(2) { transition-delay: 0.2s; }
+.animate-stagger.visible > *:nth-child(3) { transition-delay: 0.3s; }
+.animate-stagger.visible > *:nth-child(4) { transition-delay: 0.4s; }
+.animate-stagger.visible > *:nth-child(5) { transition-delay: 0.5s; }
+.animate-stagger.visible > *:nth-child(6) { transition-delay: 0.6s; }
+
+.animate-stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}

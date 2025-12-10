@@ -3,10 +3,10 @@
  * Detailed product view with specifications, images, and similar product recommendations
  */
 
-import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import { getCMSService } from '@/lib/cms'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -81,14 +81,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  // Fetch categories for header
+  // Fetch categories for header and site settings
   let categories: Awaited<ReturnType<typeof cms.getCategories>> = {
     categories: [],
   }
+  let siteSettings: Awaited<ReturnType<typeof cms.getSiteSettings>> = null
   try {
-    categories = await cms.getCategories()
+    ;[categories, siteSettings] = await Promise.all([
+      cms.getCategories(),
+      cms.getSiteSettings(),
+    ])
   } catch (error) {
-    console.error('Error fetching categories:', error)
+    console.error('Error fetching data:', error)
   }
 
   // Fetch similar products (same category or brand)
@@ -123,26 +127,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
-      <Header categories={categories.categories} storeName={storeName} />
+      <Header categories={categories.categories} storeName={storeName} siteSettings={siteSettings} />
       <main className="min-h-screen bg-gray-50">
         {/* Breadcrumb */}
         <div className="bg-white border-b border-gray-200 py-4">
           <div className="container mx-auto px-4">
             <nav className="flex items-center space-x-2 text-sm text-gray-600">
-              <a href="/" className="hover:text-brand-blue">
+              <Link href="/" className="hover:text-brand-blue">
                 {t('home')}
-              </a>
+              </Link>
               <span>/</span>
-              <a href="/products" className="hover:text-brand-blue">
+              <Link href="/products" className="hover:text-brand-blue">
                 {t('products')}
-              </a>
+              </Link>
               <span>/</span>
-              <a
+              <Link
                 href={`/products?category=${product.category.slug}`}
                 className="hover:text-brand-blue"
               >
                 {product.category.name}
-              </a>
+              </Link>
               <span>/</span>
               <span className="text-gray-900 font-medium">{product.name}</span>
             </nav>
@@ -415,12 +419,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 ))}
               </div>
               <div className="text-center mt-8">
-                <a
+                <Link
                   href={`/products?category=${product.category.slug}`}
                   className="inline-block px-6 py-3 border-2 border-brand-blue text-brand-blue rounded-lg font-semibold hover:bg-brand-blue hover:text-white transition-colors"
                 >
                   {t('viewAllInCategory', { category: product.category.name })}
-                </a>
+                </Link>
               </div>
             </div>
           </section>
@@ -510,6 +514,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         storeName={storeName}
         storeLocation="Alexandria, Egypt"
         whatsappNumber={whatsappNumber}
+        siteSettings={siteSettings}
       />
     </>
   )

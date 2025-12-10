@@ -12,6 +12,7 @@
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "seed:sanity": "tsx scripts/seed-sanity.ts",
     "setup:sanity": "tsx scripts/setup-sanity.ts",
     "setup:payload": "tsx scripts/setup-payload.ts",
     "generate:context": "tsx scripts/generate-context.ts",

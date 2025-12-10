@@ -16,20 +16,17 @@ export const sanityClient = createClient({
   token: process.env.SANITY_API_TOKEN,
 })
 
-// Helper for generating image URLs
-// Lazy-load imageUrlBuilder to avoid Turbopack CommonJS interop issues
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-let builder: any = null
+// Dynamic import for image URL builder to avoid build issues
+let builderInstance: any = null
 
 export function urlForImage(source: unknown) {
   if (!source) return null
 
-  // Lazy initialize builder on first use
-  if (!builder) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const imageUrlBuilder = require('@sanity/image-url')
-    builder = imageUrlBuilder(sanityClient)
+  // Lazy init builder to avoid import issues
+  if (!builderInstance) {
+    const { createImageUrlBuilder } = require('@sanity/image-url')
+    builderInstance = createImageUrlBuilder(sanityClient)
   }
 
-  return builder.image(source)
+  return builderInstance.image(source)
 }

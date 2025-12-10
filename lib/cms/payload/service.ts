@@ -21,6 +21,7 @@ import type {
   CategoryDTO,
   CategoriesResponse,
   HomepageDTO,
+  SiteSettingsDTO,
 } from '../types'
 
 /**
@@ -143,5 +144,17 @@ export class PayloadService implements CMSService {
     // TODO: Implement Payload API call
     console.warn('Payload service not fully implemented. Please configure Payload CMS.')
     return null
+  }
+
+  async getSiteSettings(): Promise<SiteSettingsDTO | null> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return null
+  }
+
+  async getBrands(): Promise<import('../types').BrandDTO[]> {
+    // TODO: Implement Payload API call
+    console.warn('Payload service not fully implemented. Please configure Payload CMS.')
+    return []
   }
 }

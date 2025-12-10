@@ -5,11 +5,19 @@
 
 import { getRequestConfig } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { locales } from './config'
+import { locales, defaultLocale } from './config'
 
-export default getRequestConfig(async ({ locale }) => {
+export default getRequestConfig(async ({ requestLocale }) => {
+  // Get locale from request or use default
+  let locale = await requestLocale
+
+  // If no locale provided, use default
+  if (!locale) {
+    locale = defaultLocale
+  }
+
   // Ensure locale is valid
-  if (!locale || !(locales as readonly string[]).includes(locale)) {
+  if (!(locales as readonly string[]).includes(locale)) {
     notFound()
   }
 

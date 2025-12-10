@@ -72,13 +72,13 @@ export function generateProductWhatsAppLink(
  * Format price in Egyptian Pounds (EGP)
  */
 export function formatPrice(price: number): string {
-  // Use English numerals only (not Arabic-Indic)
-  return new Intl.NumberFormat('en-US', {
+  // Format price with EGP currency symbol
+  return new Intl.NumberFormat('en-EG', {
     style: 'currency',
     currency: 'EGP',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price)
+  }).format(price).replace(/^EGP\s*/, 'EGP ')
 }
 
 /**

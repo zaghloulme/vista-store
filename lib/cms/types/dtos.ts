@@ -120,13 +120,40 @@ export interface HomepageDTO {
   heroTitle?: string
   heroSubtitle?: string
   heroImages: {
-    mainImage: ImageDTO & { link?: string }
+    mainImages: Array<ImageDTO & { link?: string }>
     topImage: ImageDTO & { link?: string }
     bottomImage: ImageDTO & { link?: string }
   }
   featuredCategories: CategoryDTO[]
   whatsappNumber?: string
   storeLocation?: string
+  highlightedSection?: { title: string; description: string }
+  categoriesSection?: { title: string; description: string }
+  moreProductsSection?: { title: string; description: string }
+  whyBuyFromUs?: Array<{ title: string; description: string; icon: string }>
+  benefitsBarTop?: Array<{ icon: string; text: string }>
+  benefitsBarBottom?: Array<{ icon: string; text: string }>
+  productDisplaySettings?: {
+    featuredProductsLimit?: number
+    moreProductsLimit?: number
+  }
+}
+
+export interface SiteSettingsDTO {
+  footerDescription?: string
+  businessHours?: string
+  quickLinks?: Array<{ title: string; url: string }>
+  socialLinks?: {
+    facebook?: string
+    instagram?: string
+    twitter?: string
+  }
+  announcementBar?: {
+    enabled?: boolean
+    message?: string
+    backgroundColor?: string
+    textColor?: string
+  }
 }
 
 export interface ProductsResponse {
@@ -138,6 +165,14 @@ export interface ProductsResponse {
 
 export interface CategoriesResponse {
   categories: CategoryDTO[]
+}
+
+export interface BrandDTO {
+  id: string
+  name: string
+  logo: ImageDTO
+  order: number
+  isActive: boolean
 }
 
 /**

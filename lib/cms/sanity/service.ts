@@ -15,6 +15,8 @@ import type {
   CategoryDTO,
   CategoriesResponse,
   HomepageDTO,
+  SiteSettingsDTO,
+  BrandDTO,
 } from '../types'
 import { sanityClient } from './client'
 import { SanityTransformer } from './transformer'
@@ -373,7 +375,10 @@ export class SanityService implements CMSService {
       name,
       slug,
       description,
-      image,
+      image {
+        asset->,
+        alt
+      },
       order,
       showInNavigation
     }`
@@ -391,7 +396,10 @@ export class SanityService implements CMSService {
       name,
       slug,
       description,
-      image,
+      image {
+        asset->,
+        alt
+      },
       order,
       showInNavigation
     }`
@@ -405,7 +413,7 @@ export class SanityService implements CMSService {
       heroTitle,
       heroSubtitle,
       heroImages {
-        mainImage {
+        mainImages[] {
           asset->,
           alt,
           link
@@ -426,15 +434,54 @@ export class SanityService implements CMSService {
         name,
         slug,
         description,
-        image,
+        image {
+          asset->,
+          alt
+        },
         order,
         showInNavigation
       },
       whatsappNumber,
-      storeLocation
+      storeLocation,
+      highlightedSection,
+      categoriesSection,
+      moreProductsSection,
+      whyBuyFromUs
     }`
 
     const homepage = await sanityClient.fetch(query)
     return homepage ? SanityTransformer.transformHomepage(homepage) : null
+  }
+
+  async getSiteSettings(): Promise<SiteSettingsDTO | null> {
+    const query = `*[_type == "siteSettings"][0] {
+      footerDescription,
+      businessHours,
+      quickLinks,
+      socialLinks,
+      announcementBar
+    }`
+
+    const settings = await sanityClient.fetch(query)
+    return settings || null
+  }
+
+  async getBrands(): Promise<BrandDTO[]> {
+    const query = `*[_type == "brandsCarousel" && isActive == true] | order(order asc) {
+      _id,
+      name,
+      logo,
+      order,
+      isActive
+    }`
+
+    const brands = await sanityClient.fetch(query)
+    return brands.map((brand: any) => ({
+      id: brand._id,
+      name: brand.name,
+      logo: SanityTransformer.transformImage(brand.logo),
+      order: brand.order,
+      isActive: brand.isActive,
+    }))
   }
 }

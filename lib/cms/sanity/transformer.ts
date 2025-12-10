@@ -24,13 +24,18 @@ export class SanityTransformer {
   static transformImage(sanityImage: unknown): ImageDTO | undefined {
     if (!sanityImage) return undefined
 
+    const img = sanityImage as Record<string, unknown>
+    const asset = img.asset as Record<string, unknown> | undefined
+
+    // Check if asset exists (it can be either a reference or a populated object)
+    if (!asset) return undefined
+
     const builder = urlForImage(sanityImage)
     if (!builder) return undefined
 
     const imageUrl = builder.width(1200).height(630).url()
+    if (!imageUrl) return undefined
 
-    const img = sanityImage as Record<string, unknown>
-    const asset = img.asset as Record<string, unknown> | undefined
     const metadata = asset?.metadata as Record<string, unknown> | undefined
     const dimensions = metadata?.dimensions as Record<string, unknown> | undefined
 
@@ -244,13 +249,31 @@ export class SanityTransformer {
     const heroImages = homepage.heroImages as Record<string, unknown> || {}
 
     // Transform hero images with links
-    const mainImage = heroImages.mainImage as Record<string, unknown>
+    const mainImages = heroImages.mainImages as unknown[] || []
+    const mainImage = heroImages.mainImage as Record<string, unknown> // Old single image for backwards compatibility
     const topImage = heroImages.topImage as Record<string, unknown>
     const bottomImage = heroImages.bottomImage as Record<string, unknown>
 
-    const transformImageWithLink = (img: Record<string, unknown>) => {
+    const transformImageWithLink = (img: Record<string, unknown> | undefined) => {
+      if (!img) {
+        console.log('⚠️  No image provided to transformImageWithLink')
+        return undefined
+      }
       const transformed = SanityTransformer.transformImage(img)
       return transformed ? { ...transformed, link: img.link as string } : undefined
+    }
+
+    // Transform main images array - handle backwards compatibility
+    let transformedMainImages = mainImages
+      .map((img) => transformImageWithLink(img as Record<string, unknown>))
+      .filter((img) => img !== undefined) as Array<ImageDTO & { link?: string }>
+
+    // If mainImages is empty but old mainImage exists, use it
+    if (transformedMainImages.length === 0 && mainImage) {
+      const oldMainImage = transformImageWithLink(mainImage)
+      if (oldMainImage) {
+        transformedMainImages = [oldMainImage]
+      }
     }
 
     // Transform featured categories (resolve references)
@@ -262,12 +285,12 @@ export class SanityTransformer {
       heroTitle: homepage.heroTitle as string,
       heroSubtitle: homepage.heroSubtitle as string,
       heroImages: {
-        mainImage: transformImageWithLink(mainImage) || {
+        mainImages: transformedMainImages.length > 0 ? transformedMainImages : [{
           url: '',
           alt: '',
           width: 1200,
           height: 630,
-        },
+        }],
         topImage: transformImageWithLink(topImage) || {
           url: '',
           alt: '',
@@ -282,8 +305,15 @@ export class SanityTransformer {
         },
       },
       featuredCategories,
+      highlightedSection: homepage.highlightedSection as { title: string; description: string } || null,
+      categoriesSection: homepage.categoriesSection as { title: string; description: string } || null,
+      moreProductsSection: homepage.moreProductsSection as { title: string; description: string } || null,
+      whyBuyFromUs: (homepage.whyBuyFromUs as unknown[] || []) as Array<{ title: string; description: string; icon: string }>,
       whatsappNumber: homepage.whatsappNumber as string,
       storeLocation: homepage.storeLocation as string,
+      benefitsBarTop: (homepage.benefitsBarTop as unknown[] || []) as Array<{ icon: string; text: string }>,
+      benefitsBarBottom: (homepage.benefitsBarBottom as unknown[] || []) as Array<{ icon: string; text: string }>,
+      productDisplaySettings: homepage.productDisplaySettings as { featuredProductsLimit?: number; moreProductsLimit?: number } || undefined,
     }
   }
 }

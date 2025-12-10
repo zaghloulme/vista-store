@@ -15,6 +15,8 @@ import type {
   CategoryDTO,
   CategoriesResponse,
   HomepageDTO,
+  SiteSettingsDTO,
+  BrandDTO,
 } from './dtos'
 
 export * from './dtos'
@@ -101,4 +103,14 @@ export interface CMSService {
    * Get homepage settings
    */
   getHomepageSettings(): Promise<HomepageDTO | null>
+
+  /**
+   * Get site settings (footer, business hours, etc.)
+   */
+  getSiteSettings(): Promise<SiteSettingsDTO | null>
+
+  /**
+   * Get all brands
+   */
+  getBrands(): Promise<BrandDTO[]>
 }
