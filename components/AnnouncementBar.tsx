@@ -17,18 +17,16 @@ interface AnnouncementBarProps {
 export default function AnnouncementBar({ 
   message, 
   backgroundColor = 'linear-gradient(to right, #3b82f6, #1e40af)', 
-  textColor = '#ffffff' 
+  textColor = '#ffffff'
 }: AnnouncementBarProps) {
-  const [isVisible, setIsVisible] = useState(false)
   const STORAGE_KEY = 'announcement-bar-closed'
-
-  useEffect(() => {
-    // Check if user has closed the bar in this session
-    const isClosed = sessionStorage.getItem(STORAGE_KEY)
-    if (!isClosed) {
-      setIsVisible(true)
+  const [isVisible, setIsVisible] = useState(() => {
+    // Only check on client side
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem(STORAGE_KEY)
     }
-  }, [])
+    return false
+  })
 
   const handleClose = () => {
     setIsVisible(false)

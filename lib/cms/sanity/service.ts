@@ -475,8 +475,14 @@ export class SanityService implements CMSService {
       isActive
     }`
 
-    const brands = await sanityClient.fetch(query)
-    return brands.map((brand: any) => ({
+    const brands = await sanityClient.fetch<Array<{
+      _id: string
+      name: string
+      logo?: unknown
+      order?: number
+      isActive?: boolean
+    }>>(query)
+    return brands.map((brand) => ({
       id: brand._id,
       name: brand.name,
       logo: SanityTransformer.transformImage(brand.logo),

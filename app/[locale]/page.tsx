@@ -7,7 +7,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getCMSService } from '@/lib/cms'
 import SplitHero from '@/components/SplitHero'
-import ProductCard from '@/components/ProductCard'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -83,7 +82,7 @@ export default async function HomePage() {
       }
     })
 
-    const categoryProducts = await Promise.all(categoryProductsPromises)
+    categoryProducts = await Promise.all(categoryProductsPromises)
   } catch (error) {
     console.error('❌ CMS FETCH ERROR:', error)
     if (error instanceof Error) {

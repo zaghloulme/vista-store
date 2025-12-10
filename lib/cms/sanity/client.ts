@@ -3,6 +3,8 @@
  */
 
 import { createClient } from '@sanity/client'
+import { createImageUrlBuilder } from '@sanity/image-url'
+import type { ImageUrlBuilder } from '@sanity/image-url/lib/types/builder'
 
 // Use placeholder values during build if not configured
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder'
@@ -17,14 +19,13 @@ export const sanityClient = createClient({
 })
 
 // Dynamic import for image URL builder to avoid build issues
-let builderInstance: any = null
+let builderInstance: ImageUrlBuilder | null = null
 
 export function urlForImage(source: unknown) {
   if (!source) return null
 
   // Lazy init builder to avoid import issues
   if (!builderInstance) {
-    const { createImageUrlBuilder } = require('@sanity/image-url')
     builderInstance = createImageUrlBuilder(sanityClient)
   }
 

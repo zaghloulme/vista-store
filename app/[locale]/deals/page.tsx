@@ -174,10 +174,10 @@ export default async function DealsPage({ params }: DealsPageProps) {
           <section className="py-16 bg-blue-600 text-white">
             <div className="container mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Don't Miss Out on These Deals!
+                Don&apos;t Miss Out on These Deals!
               </h2>
               <p className="text-lg opacity-90 mb-6 max-w-2xl mx-auto">
-                Limited stock available. These prices won't last long.
+                Limited stock available. These prices won&apos;t last long.
               </p>
               <Link
                 href="#"

@@ -5,38 +5,54 @@
  * Implements Google Consent Mode v2 for GDPR compliance
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
+
+type GtagCommand = 'consent' | 'config' | 'event' | 'get' | 'set'
+type GtagParameters = Record<string, unknown>
 
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void
-    dataLayer?: any[]
+    gtag?: (command: GtagCommand, ...args: (string | GtagParameters)[]) => void
+    dataLayer?: unknown[]
   }
 }
 
 export default function CookieConsent() {
-  const [showBanner, setShowBanner] = useState(false)
-  const [gtmId, setGtmId] = useState<string | null>(null)
+  const [showBanner, setShowBanner] = useState(() => {
+    // Only check on client side
+    if (typeof window !== 'undefined') {
+      return !localStorage.getItem('cookie-consent')
+    }
+    return false
+  })
+  const [gtmId] = useState<string | null>(process.env.NEXT_PUBLIC_GTM_ID || null)
+
+  const updateConsent = useCallback((preferences: {
+    analytics: boolean
+    marketing: boolean
+    preferences: boolean
+  }) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('consent', 'update', {
+        ad_storage: preferences.marketing ? 'granted' : 'denied',
+        ad_user_data: preferences.marketing ? 'granted' : 'denied',
+        ad_personalization: preferences.marketing ? 'granted' : 'denied',
+        analytics_storage: preferences.analytics ? 'granted' : 'denied',
+        functionality_storage: preferences.preferences ? 'granted' : 'denied',
+        personalization_storage: preferences.preferences ? 'granted' : 'denied',
+      })
+    }
+  }, [])
 
   useEffect(() => {
-    // Check if consent has already been given
     const consent = localStorage.getItem('cookie-consent')
-    if (!consent) {
-      setShowBanner(true)
-    }
-
-    // Get GTM ID from environment
-    const id = process.env.NEXT_PUBLIC_GTM_ID
-    if (id) {
-      setGtmId(id)
-    }
 
     // Initialize Google Consent Mode with default denied state
     if (typeof window !== 'undefined') {
       window.dataLayer = window.dataLayer || []
-      window.gtag = function gtag() {
-        window.dataLayer?.push(arguments)
+      window.gtag = function gtag(...args) {
+        window.dataLayer?.push(args)
       }
 
       window.gtag('consent', 'default', {
@@ -55,24 +71,7 @@ export default function CookieConsent() {
         updateConsent(preferences)
       }
     }
-  }, [])
-
-  const updateConsent = (preferences: {
-    analytics: boolean
-    marketing: boolean
-    preferences: boolean
-  }) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        ad_storage: preferences.marketing ? 'granted' : 'denied',
-        ad_user_data: preferences.marketing ? 'granted' : 'denied',
-        ad_personalization: preferences.marketing ? 'granted' : 'denied',
-        analytics_storage: preferences.analytics ? 'granted' : 'denied',
-        functionality_storage: preferences.preferences ? 'granted' : 'denied',
-        personalization_storage: preferences.preferences ? 'granted' : 'denied',
-      })
-    }
-  }
+  }, [updateConsent])
 
   const acceptAll = () => {
     const preferences = {
@@ -148,7 +147,7 @@ export default function CookieConsent() {
               </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
                 We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. 
-                By clicking "Accept All", you consent to our use of cookies.{' '}
+                By clicking &quot;Accept All&quot;, you consent to our use of cookies.{' '}
                 <a 
                   href="/privacy-policy" 
                   className="text-blue-600 hover:underline font-medium"
