@@ -239,7 +239,7 @@ export default async function ProductsPage({
                   </h3>
                   <div className="space-y-2">
                     <Link
-                      href={`/products${categorySlug ? `?category=${categorySlug}` : ''}`}
+                      href={`/products${categoryParam ? `?category=${categoryParam}` : ''}`}
                       className={`block text-sm py-1 ${
                         !minPrice && !maxPrice
                           ? 'text-brand-blue font-semibold'

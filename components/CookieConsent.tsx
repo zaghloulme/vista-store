@@ -8,12 +8,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
 
-type GtagCommand = 'consent' | 'config' | 'event' | 'get' | 'set'
-type GtagParameters = Record<string, unknown>
-
 declare global {
   interface Window {
-    gtag?: (command: GtagCommand, ...args: (string | GtagParameters)[]) => void
+    gtag?: (...args: unknown[]) => void
     dataLayer?: unknown[]
   }
 }

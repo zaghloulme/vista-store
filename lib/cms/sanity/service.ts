@@ -486,8 +486,8 @@ export class SanityService implements CMSService {
       id: brand._id,
       name: brand.name,
       logo: SanityTransformer.transformImage(brand.logo),
-      order: brand.order,
-      isActive: brand.isActive,
+      order: brand.order ?? 0,
+      isActive: brand.isActive ?? true,
     }))
   }
 }
