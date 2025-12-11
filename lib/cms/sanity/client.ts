@@ -3,8 +3,7 @@
  */
 
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
-import type { SanityImageSource } from '@sanity/image-url'
+import type { SanityImageSource, ImageUrlBuilder } from '@sanity/image-url'
 
 // Use placeholder values during build if not configured
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder'
@@ -18,8 +17,10 @@ export const sanityClient = createClient({
   token: process.env.SANITY_API_TOKEN,
 })
 
-// Image URL builder
-const builder = imageUrlBuilder(sanityClient)
+// Image URL builder - using require for package export compatibility
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { createImageUrlBuilder } = require('@sanity/image-url')
+const builder: ImageUrlBuilder = createImageUrlBuilder(sanityClient)
 
 export function urlForImage(source: SanityImageSource) {
   if (!source) return null
