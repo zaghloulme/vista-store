@@ -23,19 +23,19 @@ export default function ProductFilters({ resultCount }: ProductFiltersProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div className="text-sm text-gray-600">
-        Showing <span className="font-semibold">{resultCount}</span> products
+        Showing <span className="font-bold text-gray-900">{resultCount}</span> products
       </div>
       <div className="flex items-center gap-2">
-        <label htmlFor="sort" className="text-sm text-gray-600">
+        <label htmlFor="sort" className="text-sm font-medium text-gray-700">
           Sort by:
         </label>
         <select
           id="sort"
           value={sort}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue"
+          className="border-2 border-gray-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
         >
           <option value="featured">Featured</option>
           <option value="price-asc">Price: Low to High</option>

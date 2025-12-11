@@ -144,7 +144,7 @@ export default async function HomePage() {
             products={featuredProducts.data}
             title={homepageData?.highlightedSection?.title || 'Featured Products'}
             description={homepageData?.highlightedSection?.description || 'Discover our top picks for laptops, accessories, and tech gear'}
-            slidesPerView={{ mobile: 1, tablet: 2, desktop: 5 }}
+            slidesPerView={{ mobile: 1, tablet: 2, desktop: 4 }}
           />
         )}
 
@@ -154,7 +154,7 @@ export default async function HomePage() {
             products={newlyAddedProducts.data}
             title="New Arrivals"
             description="Recently added to our collection"
-            slidesPerView={{ mobile: 1, tablet: 2, desktop: 5 }}
+            slidesPerView={{ mobile: 1, tablet: 2, desktop: 4 }}
           />
         )}
 
@@ -220,7 +220,7 @@ export default async function HomePage() {
               products={products}
               title={category.name}
               description={category.description || `Browse our ${category.name.toLowerCase()} collection`}
-              slidesPerView={{ mobile: 1, tablet: 2, desktop: 5 }}
+              slidesPerView={{ mobile: 1, tablet: 2, desktop: 4 }}
             />
           )
         ))}
@@ -231,7 +231,7 @@ export default async function HomePage() {
             products={moreProducts.data}
             title={homepageData?.moreProductsSection?.title || 'More Products'}
             description={homepageData?.moreProductsSection?.description || 'Continue browsing our extensive collection'}
-            slidesPerView={{ mobile: 1, tablet: 2, desktop: 5 }}
+            slidesPerView={{ mobile: 1, tablet: 2, desktop: 4 }}
           />
         )}
 

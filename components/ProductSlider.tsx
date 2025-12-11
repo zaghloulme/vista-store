@@ -25,7 +25,7 @@ export default function ProductSlider({
   products,
   title,
   description,
-  slidesPerView = { mobile: 1, tablet: 2, desktop: 5 }
+  slidesPerView = { mobile: 1, tablet: 2, desktop: 4 }
 }: ProductSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [slidesToShow, setSlidesToShow] = useState(slidesPerView.desktop)

@@ -11,6 +11,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductFilters from '@/components/ProductFilters'
 import CategoryFilters from '@/components/CategoryFilters'
+import BrandFilters from '@/components/BrandFilters'
+import PriceRangeSlider from '@/components/PriceRangeSlider'
 import { getTranslations } from 'next-intl/server'
 
 export const dynamic = 'force-dynamic'
@@ -183,110 +185,52 @@ export default async function ProductsPage({
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Filters Sidebar */}
-            <aside className="lg:w-64 flex-shrink-0">
-              <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  {t('filters')}
-                </h2>
-
-                {/* Category Filter */}
-                {categories.categories.length > 0 && (
-                  <CategoryFilters
-                    categories={categories.categories}
-                    title={t('category')}
-                    allCategoriesLabel={t('allCategories')}
-                  />
-                )}
-
-                {/* Brand Filter */}
-                {brands.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">
-                      {t('brand')}
-                    </h3>
-                    <div className="space-y-2">
-                      <Link
-                        href={`/products${categoryParam ? `?category=${categoryParam}` : ''}`}
-                        className={`block text-sm py-1 ${
-                          !brand
-                            ? 'text-brand-blue font-semibold'
-                            : 'text-gray-600 hover:text-brand-blue'
-                        }`}
-                      >
-                        {t('allBrands')}
-                      </Link>
-                      {brands.map((b) => (
-                        <Link
-                          key={b}
-                          href={`/products?${categoryParam ? `category=${categoryParam}&` : ''}brand=${b}`}
-                          className={`block text-sm py-1 ${
-                            brand === b
-                              ? 'text-brand-blue font-semibold'
-                              : 'text-gray-600 hover:text-brand-blue'
-                          }`}
-                        >
-                          {b}
-                        </Link>
-                      ))}
-                    </div>
+            <aside className="lg:w-72 flex-shrink-0">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                  <div className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    {t('filters')}
                   </div>
-                )}
-
-                {/* Price Range Filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
-                    {t('priceRange')}
-                  </h3>
-                  <div className="space-y-2">
+                  {(categoryParam || brand || minPrice || maxPrice) && (
                     <Link
-                      href={`/products${categoryParam ? `?category=${categoryParam}` : ''}`}
-                      className={`block text-sm py-1 ${
-                        !minPrice && !maxPrice
-                          ? 'text-brand-blue font-semibold'
-                          : 'text-gray-600 hover:text-brand-blue'
-                      }`}
+                      href="/products"
+                      className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full transition-colors"
                     >
-                      {t('allPrices')}
+                      {t('clearFilters')}
                     </Link>
-                    <Link
-                      href={`/products?${categoryParam ? `category=${categoryParam}&` : ''}maxPrice=10000`}
-                      className="block text-sm py-1 text-gray-600 hover:text-brand-blue"
-                    >
-                      {t('under')} EGP 10,000
-                    </Link>
-                    <Link
-                      href={`/products?${categoryParam ? `category=${categoryParam}&` : ''}minPrice=10000&maxPrice=30000`}
-                      className="block text-sm py-1 text-gray-600 hover:text-brand-blue"
-                    >
-                      EGP 10,000 - 30,000
-                    </Link>
-                    <Link
-                      href={`/products?${categoryParam ? `category=${categoryParam}&` : ''}minPrice=30000&maxPrice=50000`}
-                      className="block text-sm py-1 text-gray-600 hover:text-brand-blue"
-                    >
-                      EGP 30,000 - 50,000
-                    </Link>
-                    <Link
-                      href={`/products?${categoryParam ? `category=${categoryParam}&` : ''}minPrice=50000`}
-                      className="block text-sm py-1 text-gray-600 hover:text-brand-blue"
-                    >
-                      {t('above')} EGP 50,000
-                    </Link>
-                  </div>
+                  )}
                 </div>
 
-                {/* Clear Filters */}
-                {(categoryParam || brand || minPrice || maxPrice) && (
-                  <Link
-                    href="/products"
-                    className="flex items-center justify-center gap-2 w-full py-2.5 px-4 border-2 border-red-500 rounded-lg text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    {t('clearFilters')}
-                  </Link>
-                )}
+                <div className="space-y-8 divide-y divide-gray-100">
+                  {/* Category Filter */}
+                  {categories.categories.length > 0 && (
+                    <div className="pt-2">
+                      <CategoryFilters
+                        categories={categories.categories}
+                        title={t('category')}
+                        allCategoriesLabel={t('allCategories')}
+                      />
+                    </div>
+                  )}
+
+                  {/* Price Range Filter */}
+                  <div className="pt-6">
+                    <PriceRangeSlider />
+                  </div>
+
+                  {/* Brand Filter */}
+                  {brands.length > 0 && (
+                    <div className="pt-6">
+                      <BrandFilters
+                        brands={brands}
+                        title={t('brand')}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </aside>
 

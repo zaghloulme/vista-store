@@ -86,7 +86,7 @@ export default function ProductCard({
         {/* Product Name - fixed 2 lines with min-height */}
         <Link href={`/products/${product.slug}`}>
           <h3
-            className="font-bold text-xl leading-tight mb-2 line-clamp-2 min-h-[44px] text-gray-900 group-hover:text-brand-blue transition-colors"
+            className="font-bold text-base leading-tight mb-2 line-clamp-2 min-h-[38px] text-gray-900 group-hover:text-brand-blue transition-colors"
           >
             {product.name}
           </h3>

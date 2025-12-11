@@ -18,6 +18,23 @@ export default function SplitHero({ homepageData }: SplitHeroProps) {
   const { heroImages } = homepageData
   const [currentSlide, setCurrentSlide] = useState(0)
 
+  // Use mainImages for side slots if available, otherwise fallback to configured top/bottom images
+  // This allows the user to just upload 3 images to the carousel and have them populate the grid
+  const displayMainImages = heroImages.mainImages.length > 0 ? heroImages.mainImages : []
+
+  // The first image goes to the main carousel
+  // If we have distinct side images configured in CMS, use them. 
+  // OTHERWISE, if we have extra images in the carousel list, use those for the side slots to create a "Gallery" feel.
+  // The user interaction suggests they expect the "Carousel" images to populate these slots.
+  const sideTopImage = heroImages.topImage?.url ? heroImages.topImage : (displayMainImages.length > 1 ? displayMainImages[1] : null)
+  const sideBottomImage = heroImages.bottomImage?.url ? heroImages.bottomImage : (displayMainImages.length > 2 ? displayMainImages[2] : null)
+
+  // Filter main carousel to only show images NOT used in side slots? 
+  // Or just show all? Usually a carousel shows all. 
+  // But if the user says "these three images belong to the carousel", they might mean a static grid.
+  // Let's keep the carousel functionality for the main slot, identifying it as the "Hero" slot.
+  // We'll iterate through ALL mainImages in the carousel, but the side slots show static previews of 2 & 3.
+
   // Auto-advance carousel
   useEffect(() => {
     if (heroImages.mainImages.length <= 1) {
@@ -35,23 +52,23 @@ export default function SplitHero({ homepageData }: SplitHeroProps) {
   }, [heroImages.mainImages.length])
 
   return (
-    <section className="w-full bg-gray-50" aria-label="Hero section">
+    <section className="w-full bg-gray-50 mb-8" aria-label="Hero section">
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
-          {/* Main Carousel - 9 columns on desktop (75% width) with 16:9 ratio */}
-          <div className="lg:col-span-9 w-full">
-            <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-blue-50 to-gray-100">
+        {/* Fixed height on desktop to ensure perfect alignment and no empty space */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 lg:h-[500px]">
+          {/* Main Carousel - 9 columns on desktop */}
+          <div className="lg:col-span-9 w-full h-full">
+            <div className="relative w-full h-[300px] lg:h-full overflow-hidden rounded-2xl shadow-xl bg-gray-200">
               {heroImages.mainImages.map((image, index) => (
                 image?.url ? (
                   <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-700 ${
-                      index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                    }`}
+                    className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                      }`}
                   >
                     {image.link ? (
-                      <Link 
-                        href={image.link} 
+                      <Link
+                        href={image.link}
                         className="block w-full h-full group"
                       >
                         <img
@@ -74,32 +91,32 @@ export default function SplitHero({ homepageData }: SplitHeroProps) {
                 ) : null
               ))}
 
-              {/* Carousel Navigation Dots - Always show for testing */}
-              {heroImages.mainImages.length >= 1 && (
+              {/* Carousel Navigation Dots */}
+              {heroImages.mainImages.length > 1 && (
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-20 bg-black/30 backdrop-blur-sm px-4 py-2.5 rounded-full">
                   {heroImages.mainImages.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`h-2.5 rounded-full transition-all duration-300 ${
-                        index === currentSlide
+                      className={`h-2.5 rounded-full transition-all duration-300 ${index === currentSlide
                           ? 'bg-white w-10 shadow-lg'
                           : 'bg-white/60 hover:bg-white/80 w-2.5'
-                      }`}
+                        }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}
                 </div>
               )}
 
-              {/* Previous/Next Buttons - Always show for testing */}
-              {heroImages.mainImages.length >= 1 && (
+              {/* Navigation Buttons */}
+              {heroImages.mainImages.length > 1 && (
                 <>
                   <button
-                    onClick={() => setCurrentSlide((prev) => 
-                      prev === 0 ? heroImages.mainImages.length - 1 : prev - 1
-                    )}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentSlide((prev) => prev === 0 ? heroImages.mainImages.length - 1 : prev - 1);
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 opacity-0 group-hover:opacity-100"
                     aria-label="Previous slide"
                   >
                     <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,10 +124,11 @@ export default function SplitHero({ homepageData }: SplitHeroProps) {
                     </svg>
                   </button>
                   <button
-                    onClick={() => setCurrentSlide((prev) => 
-                      (prev + 1) % heroImages.mainImages.length
-                    )}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentSlide((prev) => (prev + 1) % heroImages.mainImages.length);
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 opacity-0 group-hover:opacity-100"
                     aria-label="Next slide"
                   >
                     <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,55 +140,61 @@ export default function SplitHero({ homepageData }: SplitHeroProps) {
             </div>
           </div>
 
-          {/* Side Promotions - 3 columns on desktop (25% width), smaller images */}
-          <div className="lg:col-span-3 flex flex-col gap-4 md:gap-6 min-h-[400px] lg:min-h-full">
-            {/* Top Promotion - Smaller */}
-            {heroImages.topImage?.url && (
-              <div className="relative flex-1 min-h-[200px] lg:min-h-0 overflow-hidden rounded-xl shadow-md bg-gradient-to-br from-purple-50 to-gray-100 group">
-                {heroImages.topImage.link ? (
-                  <Link href={heroImages.topImage.link} className="block absolute inset-0">
+          {/* Side Promotions - Fill height to match carousel */}
+          <div className="lg:col-span-3 flex flex-col gap-4 md:gap-6 h-full">
+            {/* Top Promotion */}
+            <div className="relative flex-1 rounded-xl shadow-md overflow-hidden bg-gray-100 group h-[200px] lg:h-auto">
+              {sideTopImage?.url ? (
+                sideTopImage.link ? (
+                  <Link href={sideTopImage.link} className="block w-full h-full">
                     <img
-                      src={heroImages.topImage.url}
-                      alt={heroImages.topImage.alt || 'Featured promotion'}
+                      src={sideTopImage.url}
+                      alt={sideTopImage.alt || 'Featured promotion'}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Link>
                 ) : (
                   <img
-                    src={heroImages.topImage.url}
-                    alt={heroImages.topImage.alt || 'Featured promotion'}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    src={sideTopImage.url}
+                    alt={sideTopImage.alt || 'Featured promotion'}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                )}
-              </div>
-            )}
+                )
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
+                  <span className="text-sm">Coming Soon</span>
+                </div>
+              )}
+            </div>
 
-            {/* Bottom Promotion - Smaller */}
-            {heroImages.bottomImage?.url && (
-              <div className="relative flex-1 min-h-[200px] lg:min-h-0 overflow-hidden rounded-xl shadow-md bg-gradient-to-br from-orange-50 to-gray-100 group">
-                {heroImages.bottomImage.link ? (
-                  <Link href={heroImages.bottomImage.link} className="block absolute inset-0">
+            {/* Bottom Promotion */}
+            <div className="relative flex-1 rounded-xl shadow-md overflow-hidden bg-gray-100 group h-[200px] lg:h-auto">
+              {sideBottomImage?.url ? (
+                sideBottomImage.link ? (
+                  <Link href={sideBottomImage.link} className="block w-full h-full">
                     <img
-                      src={heroImages.bottomImage.url}
-                      alt={heroImages.bottomImage.alt || 'Featured offer'}
+                      src={sideBottomImage.url}
+                      alt={sideBottomImage.alt || 'Featured offer'}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Link>
                 ) : (
                   <img
-                    src={heroImages.bottomImage.url}
-                    alt={heroImages.bottomImage.alt || 'Featured offer'}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    src={sideBottomImage.url}
+                    alt={sideBottomImage.alt || 'Featured offer'}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                )}
-              </div>
-            )}
+                )
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
+                  <span className="text-sm">Coming Soon</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
