@@ -18,7 +18,7 @@ export const sanityClient = createClient({
 })
 
 // Image URL builder - using require for package export compatibility
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const { createImageUrlBuilder } = require('@sanity/image-url')
 const builder: ImageUrlBuilder = createImageUrlBuilder(sanityClient)
 
