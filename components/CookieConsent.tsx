@@ -11,7 +11,7 @@ import Script from 'next/script'
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void
-    dataLayer?: unknown[]
+    dataLayer?: Record<string, unknown>[]
   }
 }
 
@@ -49,7 +49,7 @@ export default function CookieConsent() {
     if (typeof window !== 'undefined') {
       window.dataLayer = window.dataLayer || []
       window.gtag = function gtag(...args) {
-        window.dataLayer?.push(args)
+        window.dataLayer?.push(args as unknown as Record<string, unknown>)
       }
 
       window.gtag('consent', 'default', {

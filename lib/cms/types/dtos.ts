@@ -170,7 +170,7 @@ export interface CategoriesResponse {
 export interface BrandDTO {
   id: string
   name: string
-  logo: ImageDTO
+  logo?: ImageDTO
   order: number
   isActive: boolean
 }

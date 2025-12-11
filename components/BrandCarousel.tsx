@@ -69,19 +69,21 @@ export default function BrandCarousel({ brands }: BrandCarouselProps) {
         }}
       >
         {duplicatedBrands.map((brand, index) => (
-          <div
-            key={`${brand.id}-${index}`}
-            className="flex-shrink-0 flex items-center justify-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 p-6"
-            style={{ width: '180px', height: '90px' }}
-          >
-            <img
-              src={brand.logo.url}
-              alt={brand.name}
-              className="max-w-full max-h-full object-contain"
-              loading="lazy"
-              style={{ maxWidth: '140px', maxHeight: '60px' }}
-            />
-          </div>
+          brand.logo ? (
+            <div
+              key={`${brand.id}-${index}`}
+              className="flex-shrink-0 flex items-center justify-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 p-6"
+              style={{ width: '180px', height: '90px' }}
+            >
+              <img
+                src={brand.logo.url}
+                alt={brand.name}
+                className="max-w-full max-h-full object-contain"
+                loading="lazy"
+                style={{ maxWidth: '140px', maxHeight: '60px' }}
+              />
+            </div>
+          ) : null
         ))}
       </div>
     </section>
