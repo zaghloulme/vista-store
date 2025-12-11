@@ -90,7 +90,7 @@ export default function Header({ categories, storeName, siteSettings }: HeaderPr
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {/* Products Mega Menu */}
-              <div 
+              <div
                 className="relative"
                 onMouseEnter={() => setProductsOpen(true)}
                 onMouseLeave={() => setProductsOpen(false)}
@@ -114,7 +114,7 @@ export default function Header({ categories, storeName, siteSettings }: HeaderPr
 
                 {/* Mega Menu Dropdown */}
                 {productsOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-[600px] max-w-[90vw] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6">
+                  <div className="absolute top-full right-0 mt-2 w-[600px] max-w-[90vw] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6">
                     <div className="grid grid-cols-2 gap-4">
                       {/* All Products Link */}
                       <Link

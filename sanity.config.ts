@@ -5,6 +5,7 @@
 
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
+import { presentationTool } from 'sanity/presentation'
 import { schemaTypes } from './sanity/schemas'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '27p8z5ah'
@@ -49,7 +50,15 @@ export default defineConfig({
               (item) => !singletonTypes.has(item.getId() || '')
             ),
           ])
-    })
+    }),
+    presentationTool({
+      previewUrl: {
+        origin: 'http://localhost:3000',
+        draftMode: {
+          enable: '/api/draft',
+        },
+      },
+    }),
   ],
 
   schema: {

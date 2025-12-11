@@ -63,12 +63,12 @@ export default async function HomePage() {
     const featuredLimit = homepageData?.productDisplaySettings?.featuredProductsLimit || 8
     const moreProductsLimit = homepageData?.productDisplaySettings?.moreProductsLimit || 8
 
-    // Fetch products with CMS-configured limits
-    ;[featuredProducts, moreProducts, newlyAddedProducts] = await Promise.all([
-      cms.getProducts({ featured: true, limit: featuredLimit }),
-      cms.getProducts({ limit: moreProductsLimit, offset: featuredLimit }),
-      cms.getProducts({ limit: 8, offset: 0 }), // Newly added products
-    ])
+      // Fetch products with CMS-configured limits
+      ;[featuredProducts, moreProducts, newlyAddedProducts] = await Promise.all([
+        cms.getProducts({ featured: true, limit: featuredLimit }),
+        cms.getProducts({ limit: moreProductsLimit, offset: featuredLimit }),
+        cms.getProducts({ limit: 8, offset: 0 }), // Newly added products
+      ])
 
     // Fetch products for each featured category
     const categoryProductsPromises = (homepageData?.featuredCategories || []).map(async (category) => {
@@ -117,21 +117,22 @@ export default async function HomePage() {
       />
 
       <main>
+        {/* SEO: Main heading for homepage - visually hidden */}
+        <h1 className="sr-only">{storeName} - Your Premier Tech Store</h1>
+
         {/* Hero Section - Full width carousel */}
         {homepageData && <SplitHero homepageData={homepageData} />}
 
-        {/* Benefits Bar #1 - Scrolling promotions (from CMS with fallback) */}
+        {/* Benefits Bar #1 - Static promotions (from CMS with fallback) */}
         <BenefitsBar
           benefits={homepageData?.benefitsBarTop && homepageData.benefitsBarTop.length > 0
             ? homepageData.benefitsBarTop
             : [
-                { icon: '💳', text: 'Installments Up To 5 Months With No Interest' },
-                { icon: '🔄', text: 'Triple ZERO Up To 6 Months' },
-                { icon: '🛡️', text: '1-Year Warranty on Products' },
-                { icon: '🚚', text: 'Free Shipping Over 1999 EGP' },
-              ]
+              { icon: '💳', text: 'Installments Up To 5 Months With No Interest' },
+              { icon: '🛡️', text: '1-Year Warranty on Products' },
+              { icon: '🚚', text: 'Free Shipping Over 1999 EGP' },
+            ]
           }
-          speed={50}
         />
 
         {/* Brand Carousel - Brands we carry */}
@@ -170,7 +171,7 @@ export default async function HomePage() {
             </div>
 
             {homepageData?.featuredCategories && homepageData.featuredCategories.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 place-items-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
                 {homepageData.featuredCategories.map((category) => (
                   <Link
                     key={category.id}
@@ -184,7 +185,7 @@ export default async function HomePage() {
                           alt={category.image.alt || category.name}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-300"
-                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
                       </div>
                     ) : (

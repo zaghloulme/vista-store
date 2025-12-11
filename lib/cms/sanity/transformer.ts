@@ -49,6 +49,39 @@ export class SanityTransformer {
   }
 
   /**
+   * Transform brand logo image without cropping
+   * Preserves original aspect ratio
+   */
+  static transformBrandLogo(sanityImage: unknown): ImageDTO | undefined {
+    if (!sanityImage) return undefined
+
+    const img = sanityImage as Record<string, unknown>
+    const asset = img.asset as Record<string, unknown> | undefined
+
+    // Check if asset exists (it can be either a reference or a populated object)
+    if (!asset) return undefined
+
+    const builder = urlForImage(sanityImage)
+    if (!builder) return undefined
+
+    // Don't force dimensions - preserve aspect ratio
+    // Just optimize with auto format and quality
+    const imageUrl = builder.auto('format').quality(90).url()
+    if (!imageUrl) return undefined
+
+    const metadata = asset?.metadata as Record<string, unknown> | undefined
+    const dimensions = metadata?.dimensions as Record<string, unknown> | undefined
+
+    return {
+      url: imageUrl,
+      alt: (img.alt as string) || '',
+      width: (dimensions?.width as number) || 800,
+      height: (dimensions?.height as number) || 600,
+      blurDataURL: metadata?.lqip as string,
+    }
+  }
+
+  /**
    * Transform Sanity SEO object to SEOMetadata
    */
   static transformSEO(sanitySEO: unknown): SEOMetadata {
@@ -147,12 +180,12 @@ export class SanityTransformer {
       excerpt: (post.excerpt as string) || '',
       author: author
         ? {
-            id: author._id as string,
-            name: author.name as string,
-            bio: author.bio as string,
-            avatar: SanityTransformer.transformImage(author.avatar),
-            social: author.social as Record<string, string>,
-          }
+          id: author._id as string,
+          name: author.name as string,
+          bio: author.bio as string,
+          avatar: SanityTransformer.transformImage(author.avatar),
+          social: author.social as Record<string, string>,
+        }
         : undefined,
       categories: (post.categories as unknown[])?.map((cat) =>
         SanityTransformer.transformCategory(cat)
@@ -202,19 +235,19 @@ export class SanityTransformer {
     const seo: SEOMetadata = product.seo
       ? SanityTransformer.transformSEO(product.seo)
       : {
-          title: `${product.name as string} | Vista Store`,
-          description: (product.shortDescription as string) || (product.description as string) || '',
-          keywords: [
-            product.name as string,
-            product.brand as string,
-            category?.name as string,
-          ].filter(Boolean),
-          ogImage: images[0],
-          ogType: 'product',
-          twitterCard: 'summary_large_image',
-          noindex: false,
-          nofollow: false,
-        }
+        title: `${product.name as string} | Vista Store`,
+        description: (product.shortDescription as string) || (product.description as string) || '',
+        keywords: [
+          product.name as string,
+          product.brand as string,
+          category?.name as string,
+        ].filter(Boolean),
+        ogImage: images[0],
+        ogType: 'product',
+        twitterCard: 'summary_large_image',
+        noindex: false,
+        nofollow: false,
+      }
 
     return {
       id: product._id as string,
@@ -256,11 +289,13 @@ export class SanityTransformer {
 
     const transformImageWithLink = (img: Record<string, unknown> | undefined) => {
       if (!img) {
-        console.log('⚠️  No image provided to transformImageWithLink')
         return undefined
       }
       const transformed = SanityTransformer.transformImage(img)
-      return transformed ? { ...transformed, link: img.link as string } : undefined
+      if (!transformed) {
+        return undefined
+      }
+      return { ...transformed, link: img.link as string }
     }
 
     // Transform main images array - handle backwards compatibility
@@ -281,6 +316,10 @@ export class SanityTransformer {
       .map((cat) => SanityTransformer.transformCategory(cat))
       .filter((cat): cat is CategoryDTO => cat !== undefined)
 
+    // Transform side images
+    const transformedTopImage = transformImageWithLink(topImage)
+    const transformedBottomImage = transformImageWithLink(bottomImage)
+
     return {
       heroTitle: homepage.heroTitle as string,
       heroSubtitle: homepage.heroSubtitle as string,
@@ -291,13 +330,13 @@ export class SanityTransformer {
           width: 1200,
           height: 630,
         }],
-        topImage: transformImageWithLink(topImage) || {
+        topImage: transformedTopImage || {
           url: '',
           alt: '',
           width: 600,
           height: 400,
         },
-        bottomImage: transformImageWithLink(bottomImage) || {
+        bottomImage: transformedBottomImage || {
           url: '',
           alt: '',
           width: 600,

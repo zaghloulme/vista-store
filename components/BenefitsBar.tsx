@@ -1,12 +1,11 @@
 'use client'
 
 /**
- * Infinite Scrolling Benefits Bar
- * Inspired by loading-eg.com's "Updates" section
- * Shows key selling points with icons in a smooth infinite scroll
+ * Static Benefits Bar
+ * Shows key selling points with icons in a stationary layout
+ * Displays only 3 benefits in a centered grid
  */
 
-import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 interface Benefit {
@@ -17,29 +16,26 @@ interface Benefit {
 
 interface BenefitsBarProps {
   benefits: Benefit[]
-  speed?: number // Animation duration in seconds (default: 40)
-  showLabel?: boolean // Show "Updates" label
+  speed?: number // Kept for backwards compatibility but not used
+  showLabel?: boolean // Show label
   label?: string
 }
 
 export default function BenefitsBar({
   benefits,
-  speed = 40,
   showLabel = false,
   label = 'Updates'
 }: BenefitsBarProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  // Only take the first 3 benefits
+  const displayBenefits = benefits.slice(0, 3)
 
-  // Triple the benefits array for seamless infinite scroll
-  const tripledBenefits = [...benefits, ...benefits, ...benefits]
-
-  if (benefits.length === 0) {
+  if (displayBenefits.length === 0) {
     return null
   }
 
   return (
     <section
-      className="relative w-full py-5 md:py-6 border-t border-b border-gray-200 bg-white overflow-hidden"
+      className="relative w-full py-5 md:py-6 border-t border-b border-gray-200 bg-white"
       aria-label="Store benefits"
     >
       {/* Optional floating label */}
@@ -49,60 +45,41 @@ export default function BenefitsBar({
         </p>
       )}
 
-      {/* Scrolling container */}
-      <div
-        ref={containerRef}
-        className="benefits-scroll-container flex items-center gap-8 md:gap-12"
-        style={{
-          animation: `infiniteScroll ${speed}s linear infinite`,
-        }}
-      >
-        {tripledBenefits.map((benefit, index) => (
-          <div
-            key={`${benefit.text}-${index}`}
-            className="flex items-center gap-3 md:gap-4 flex-shrink-0 px-4 md:px-6"
-          >
-            {/* Icon */}
-            <div className="flex-shrink-0">
-              {benefit.isImage && benefit.icon ? (
-                <div className="relative w-10 h-10 md:w-12 md:h-12">
-                  <Image
-                    src={benefit.icon}
-                    alt=""
-                    fill
-                    className="object-contain"
-                    sizes="48px"
-                  />
-                </div>
-              ) : (
-                <span className="text-2xl md:text-3xl" aria-hidden="true">
-                  {benefit.icon}
-                </span>
-              )}
+      {/* Static container with centered grid */}
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+          {displayBenefits.map((benefit, index) => (
+            <div
+              key={`${benefit.text}-${index}`}
+              className="flex items-center justify-center gap-3 md:gap-4"
+            >
+              {/* Icon */}
+              <div className="flex-shrink-0">
+                {benefit.isImage && benefit.icon ? (
+                  <div className="relative w-10 h-10 md:w-12 md:h-12">
+                    <Image
+                      src={benefit.icon}
+                      alt=""
+                      fill
+                      className="object-contain"
+                      sizes="48px"
+                    />
+                  </div>
+                ) : (
+                  <span className="text-2xl md:text-3xl" aria-hidden="true">
+                    {benefit.icon}
+                  </span>
+                )}
+              </div>
+
+              {/* Text */}
+              <span className="text-sm md:text-base font-medium text-gray-700 text-center md:text-left">
+                {benefit.text}
+              </span>
             </div>
-
-            {/* Text */}
-            <span className="text-sm md:text-base font-medium text-gray-700 whitespace-nowrap">
-              {benefit.text}
-            </span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes infiniteScroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-33.333%);
-          }
-        }
-
-        .benefits-scroll-container {
-          width: fit-content;
-        }
-      `}</style>
     </section>
   )
 }

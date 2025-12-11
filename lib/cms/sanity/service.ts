@@ -226,7 +226,7 @@ export class SanityService implements CMSService {
 
   async getAllPageSlugs(locale: string): Promise<string[]> {
     const query = `*[_type == "page" && locale == $locale].slug.current`
-    return sanityClient.fetch(query, { locale})
+    return sanityClient.fetch(query, { locale })
   }
 
   async getAllPostSlugs(locale: string): Promise<string[]> {
@@ -485,7 +485,7 @@ export class SanityService implements CMSService {
     return brands.map((brand) => ({
       id: brand._id,
       name: brand.name,
-      logo: SanityTransformer.transformImage(brand.logo),
+      logo: SanityTransformer.transformBrandLogo(brand.logo),
       order: brand.order ?? 0,
       isActive: brand.isActive ?? true,
     }))

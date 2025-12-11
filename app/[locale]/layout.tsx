@@ -12,6 +12,7 @@ import { getMessages } from 'next-intl/server'
 import { locales, localeDirections } from '@/i18n/config'
 import { PageViewTracker } from '@/components/PageViewTracker'
 import CookieConsent from '@/components/CookieConsent'
+import { VisualEditing } from '@/components/VisualEditing'
 import '../globals.css'
 
 // Configure Inter font from Google Fonts with fallback
@@ -58,6 +59,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
+        <VisualEditing />
         <CookieConsent />
       </body>
     </html>

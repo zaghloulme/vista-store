@@ -67,7 +67,7 @@ export default function ProductCard({
           )}
 
           {discount > 0 && (
-            <span className="glass bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
+            <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
               -{discount}%
             </span>
           )}
@@ -85,7 +85,9 @@ export default function ProductCard({
 
         {/* Product Name - fixed 2 lines with min-height */}
         <Link href={`/products/${product.slug}`}>
-          <h3 className="font-semibold text-sm mb-2 line-clamp-2 min-h-[40px] text-gray-900 group-hover:text-brand-blue transition-colors">
+          <h3
+            className="font-bold text-xl leading-tight mb-2 line-clamp-2 min-h-[44px] text-gray-900 group-hover:text-brand-blue transition-colors"
+          >
             {product.name}
           </h3>
         </Link>
@@ -105,21 +107,33 @@ export default function ProductCard({
           </p>
         )}
 
-        {/* Price */}
+        {/* Price - Impactful & Value-Oriented */}
         <div className="mb-4">
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-xl font-bold text-gray-900">
+          {hasDiscount(product) ? (
+            <>
+              {/* Discounted Price Layout */}
+              <div className="flex items-baseline gap-2 mb-1.5">
+                <span className="text-xl font-bold text-blue-600">
+                  {formatPrice(product.price)}
+                </span>
+                <span className="text-sm text-gray-400 line-through">
+                  {formatPrice(product.compareAtPrice!)}
+                </span>
+              </div>
+              {/* Savings Badge */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-md">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-xs font-bold">
+                  Save {formatPrice(product.compareAtPrice! - product.price)}
+                </span>
+              </div>
+            </>
+          ) : (
+            /* Regular Price */
+            <div className="text-xl font-bold text-gray-900">
               {formatPrice(product.price)}
-            </span>
-            {hasDiscount(product) && (
-              <span className="text-sm text-gray-400 line-through">
-                {formatPrice(product.compareAtPrice!)}
-              </span>
-            )}
-          </div>
-          {discount > 0 && (
-            <div className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded">
-              Save {discount}%
             </div>
           )}
         </div>
